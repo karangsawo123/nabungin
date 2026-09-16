@@ -203,3 +203,23 @@ export async function getGoalsByWorkspace(workspaceId: string): Promise<Goal[]> 
 
   return data
 }
+
+/**
+ * Mengambil satu Goal berdasarkan ID (terproteksi RLS)
+ */
+export async function getGoalById(goalId: string): Promise<Goal | null> {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('goals')
+    .select('*')
+    .eq('id', goalId)
+    .single()
+
+  if (error || !data) {
+    return null
+  }
+
+  return data
+}
+

@@ -7,7 +7,8 @@ import {
   LayoutDashboard,
   Target,
   ArrowLeftRight,
-  User,
+  Tags,
+  Users,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -22,22 +23,28 @@ export function MobileNav() {
       active: pathname === '/dashboard',
     },
     {
-      label: 'Tabungan',
+      label: 'Target',
       href: '/goals',
       icon: Target,
       active: pathname.startsWith('/goals'),
     },
     {
       label: 'Transaksi',
-      href: '#transactions',
+      href: '/transactions',
       icon: ArrowLeftRight,
       active: pathname.startsWith('/transactions'),
     },
     {
-      label: 'Akun',
-      href: '#profile',
-      icon: User,
-      active: pathname.startsWith('/profile'),
+      label: 'Kategori',
+      href: '/categories',
+      icon: Tags,
+      active: pathname.startsWith('/categories'),
+    },
+    {
+      label: 'Ruang',
+      href: '/groups',
+      icon: Users,
+      active: pathname.startsWith('/groups'),
     },
   ]
 

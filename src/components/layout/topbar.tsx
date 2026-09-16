@@ -1,8 +1,9 @@
 'use client'
 
 import * as React from 'react'
-import { Bell, Wallet } from 'lucide-react'
+import { Wallet } from 'lucide-react'
 import { WorkspaceSwitcher } from '@/components/groups/workspace-switcher'
+import { NotificationBell } from '@/components/notifications/notification-bell'
 import { Avatar } from '@/components/ui/avatar'
 import type { Profile } from '@/types/database'
 
@@ -32,16 +33,7 @@ export function Topbar({ profile, email }: TopbarProps) {
       {/* Right: Actions & Profile */}
       <div className="flex items-center gap-3">
         {/* Notification Bell */}
-        <button
-          type="button"
-          aria-label="Pemberitahuan"
-          onClick={() => alert('Notifikasi realtime akan hadir di modul V2')}
-          className="relative flex h-10 w-10 min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-[#1C2538] bg-[#101522] text-slate-400 transition-colors hover:border-[#2A3650] hover:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/30 cursor-pointer"
-        >
-          <Bell className="h-4 w-4" />
-          {/* Unread indicator */}
-          <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-emerald-500 ring-2 ring-[#090D16]" />
-        </button>
+        <NotificationBell />
 
         {/* Desktop Profile Pill */}
         <div className="hidden sm:flex items-center gap-2.5 rounded-xl border border-[#1C2538] bg-[#101522] p-1.5 pr-3">

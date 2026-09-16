@@ -36,28 +36,24 @@ export function Sidebar({ profile, email }: SidebarProps) {
       href: '/goals',
       icon: Target,
       active: pathname.startsWith('/goals'),
-      badge: 'V1',
     },
     {
       label: 'Transaksi',
-      href: '#transactions',
+      href: '/transactions',
       icon: ArrowLeftRight,
       active: pathname.startsWith('/transactions'),
-      badge: 'V1',
     },
     {
       label: 'Kategori Pos',
-      href: '#categories',
+      href: '/categories',
       icon: Tags,
       active: pathname.startsWith('/categories'),
-      badge: 'V1',
     },
     {
       label: 'Ruang Kolaborasi',
-      href: '#workspaces',
+      href: '/groups',
       icon: Users,
       active: pathname.startsWith('/groups'),
-      badge: 'V2',
     },
   ]
 
@@ -109,11 +105,6 @@ export function Sidebar({ profile, email }: SidebarProps) {
                 />
                 <span>{item.label}</span>
               </div>
-              {item.badge && (
-                <span className="rounded bg-slate-800/80 px-1.5 py-0.5 text-[10px] font-medium text-slate-400">
-                  {item.badge}
-                </span>
-              )}
             </Link>
           )
         })}

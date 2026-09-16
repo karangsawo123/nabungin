@@ -18,8 +18,11 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { EditGoalDialog } from '@/components/goals/edit-goal-dialog'
+import { CreateTransactionDialog } from '@/components/transactions/create-transaction-dialog'
+import { getTransactionsByWorkspace, type TransactionWithDetails } from '@/actions/transactions'
+import { getGoalById } from '@/actions/goals'
 import { formatRupiah, formatDate } from '@/lib/utils'
-import type { Goal, Group, MemberRole } from '@/types/database'
+import type { Goal, Group, MemberRole, TransactionType } from '@/types/database'
 
 export interface GoalDetailViewProps {
   initialGoal: Goal
@@ -34,6 +37,34 @@ export function GoalDetailView({
 }: GoalDetailViewProps) {
   const [goal, setGoal] = React.useState<Goal>(initialGoal)
   const [isEditOpen, setIsEditOpen] = React.useState(false)
+
+  // Transaction Dialog & History State
+  const [goalTransactions, setGoalTransactions] = React.useState<TransactionWithDetails[]>([])
+  const [loadingTx, setLoadingTx] = React.useState(true)
+  const [isTxDialogOpen, setIsTxDialogOpen] = React.useState(false)
+  const [dialogType, setDialogType] = React.useState<TransactionType>('deposit')
+
+  const loadTransactions = React.useCallback(async () => {
+    try {
+      setLoadingTx(true)
+      const [txList, refreshedGoal] = await Promise.all([
+        getTransactionsByWorkspace(workspace.id),
+        getGoalById(goal.id),
+      ])
+      setGoalTransactions(txList.filter((tx: TransactionWithDetails) => tx.goal_id === goal.id))
+      if (refreshedGoal) {
+        setGoal(refreshedGoal)
+      }
+    } catch {
+      // silent
+    } finally {
+      setLoadingTx(false)
+    }
+  }, [workspace.id, goal.id])
+
+  React.useEffect(() => {
+    loadTransactions()
+  }, [loadTransactions])
 
   const current = Number(goal.current_amount) || 0
   const target = Number(goal.target_amount) || 0
@@ -237,34 +268,115 @@ export function GoalDetailView({
         </CardContent>
       </Card>
 
-      {/* 6. Upcoming Transactions Section Placeholder */}
+      {/* 6. Riwayat Transaksi Nyata untuk Target Ini */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
               <CardTitle>Riwayat Mutasi & Transaksi</CardTitle>
               <CardDescription>
-                Daftar penyetoran (deposit) dan penarikan (withdrawal) yang dialokasikan ke target ini.
+                Daftar penyetoran dan penarikan yang dialokasikan khusus ke target &quot;{goal.name}&quot;.
               </CardDescription>
             </div>
-            <Badge variant="outline" className="text-slate-400">
-              Modul Transaksi (V1)
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="deposit"
+                size="sm"
+                onClick={() => {
+                  setDialogType('deposit')
+                  setIsTxDialogOpen(true)
+                }}
+                className="min-h-[38px]"
+              >
+                + Setor ke Target
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => {
+                  setDialogType('withdrawal')
+                  setIsTxDialogOpen(true)
+                }}
+                disabled={current <= 0}
+                className="min-h-[38px]"
+              >
+                - Tarik Saldo
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="rounded-2xl border border-dashed border-[#1C2538] bg-[#0E1320] p-8 text-center">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-800 text-slate-400 mx-auto mb-3">
-              <Wallet className="h-5 w-5" />
+          {loadingTx ? (
+            <div className="p-8 text-center text-xs text-slate-400">
+              <Clock className="h-5 w-5 animate-spin mx-auto mb-2 text-emerald-400" />
+              Memuat mutasi transaksi...
             </div>
-            <h4 className="text-sm font-semibold text-white">
-              Pencatatan Mutasi Transaksi
-            </h4>
-            <p className="text-xs text-slate-400 max-w-md mx-auto mt-1">
-              Penyetoran dan penarikan dana untuk target ini akan aktif pada modul Transaksi berikutnya.
-              Setiap transaksi akan secara otomatis memperbarui saldo ledger target ini.
-            </p>
-          </div>
+          ) : goalTransactions.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-[#1C2538] bg-[#0E1320] p-8 text-center">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-800 text-slate-400 mx-auto mb-3">
+                <Wallet className="h-5 w-5" />
+              </div>
+              <h4 className="text-sm font-semibold text-white">
+                Belum Ada Mutasi Transaksi
+              </h4>
+              <p className="text-xs text-slate-400 max-w-md mx-auto mt-1">
+                Lakukan setoran perdana untuk mulai mengakumulasi tabungan mencapai target &quot;{goal.name}&quot;.
+              </p>
+            </div>
+          ) : (
+            <div className="divide-y divide-[#1C2538] border border-[#1C2538] rounded-xl overflow-hidden bg-[#0A0E18]">
+              {goalTransactions.map((tx) => {
+                const isDeposit = tx.type === 'deposit'
+                return (
+                  <div
+                    key={tx.id}
+                    className="flex items-center justify-between p-3.5 hover:bg-[#111726] transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`h-8 w-8 rounded-lg flex items-center justify-center font-mono font-bold text-xs ${
+                          isDeposit
+                            ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                            : 'bg-rose-500/15 text-rose-400 border border-rose-500/30'
+                        }`}
+                      >
+                        {isDeposit ? '+' : '-'}
+                      </div>
+                      <div>
+                        <div className="text-xs font-semibold text-white">
+                          {tx.notes || (isDeposit ? 'Setoran Tabungan' : 'Penarikan Dana')}
+                        </div>
+                        <div className="text-[10px] text-slate-400 flex items-center gap-2 mt-0.5">
+                          <span>{formatDate(tx.transaction_date || tx.created_at)}</span>
+                          {tx.categories && (
+                            <>
+                              <span>•</span>
+                              <span className="text-slate-300">{tx.categories.name}</span>
+                            </>
+                          )}
+                          {tx.profiles && (
+                            <>
+                              <span>•</span>
+                              <span className="text-slate-400">{tx.profiles.full_name}</span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div
+                      className={`font-mono text-xs sm:text-sm font-bold ${
+                        isDeposit ? 'text-emerald-400' : 'text-rose-400'
+                      }`}
+                    >
+                      {isDeposit ? '+' : '-'}
+                      {formatRupiah(Number(tx.amount))}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -274,6 +386,17 @@ export function GoalDetailView({
         onClose={() => setIsEditOpen(false)}
         goal={goal}
         onSuccess={(updated) => setGoal(updated)}
+      />
+
+      {/* Dialog Create Transaction */}
+      <CreateTransactionDialog
+        isOpen={isTxDialogOpen}
+        onClose={() => setIsTxDialogOpen(false)}
+        defaultType={dialogType}
+        defaultGoalId={goal.id}
+        onSuccess={() => {
+          loadTransactions()
+        }}
       />
     </div>
   )

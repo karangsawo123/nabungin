@@ -84,3 +84,47 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-tertiary);
 }
+
+/* Print / PDF Export Styles */
+@media print {
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+  }
+
+  header,
+  aside,
+  nav,
+  button,
+  .no-print {
+    display: none !important;
+  }
+
+  main {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  .border,
+  .rounded-2xl,
+  .rounded-xl {
+    border-color: #E2E8F0 !important;
+    background: #FFFFFF !important;
+    color: #0F172A !important;
+    box-shadow: none !important;
+  }
+
+  * {
+    color: #0F172A !important;
+  }
+
+  .text-emerald-400 {
+    color: #059669 !important;
+  }
+
+  .text-rose-400 {
+    color: #E11D48 !important;
+  }
+}
+
