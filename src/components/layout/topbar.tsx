@@ -4,6 +4,7 @@ import * as React from 'react'
 import { Wallet } from 'lucide-react'
 import { WorkspaceSwitcher } from '@/components/groups/workspace-switcher'
 import { NotificationBell } from '@/components/notifications/notification-bell'
+import { LogoutButton } from '@/components/auth/logout-button'
 import { Avatar } from '@/components/ui/avatar'
 import type { Profile } from '@/types/database'
 import { formatDisplayUsername } from '@/lib/auth-helpers'
@@ -19,7 +20,7 @@ export function Topbar({ profile, email }: TopbarProps) {
   return (
     <header className="sticky top-0 z-20 flex h-16 w-full items-center justify-between border-b border-[#1C2538] bg-[#090D16]/90 px-4 backdrop-blur-md sm:px-6">
       {/* Left: Mobile Brand & Workspace Switcher */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2.5 sm:gap-3">
         {/* Mobile Brand Logo */}
         <div className="flex items-center gap-2 md:hidden">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/15 text-emerald-400">
@@ -31,8 +32,8 @@ export function Topbar({ profile, email }: TopbarProps) {
         <WorkspaceSwitcher />
       </div>
 
-      {/* Right: Actions & Profile */}
-      <div className="flex items-center gap-3">
+      {/* Right: Actions & Profile & Logout */}
+      <div className="flex items-center gap-2 sm:gap-3">
         {/* Notification Bell */}
         <NotificationBell />
 
@@ -43,6 +44,9 @@ export function Topbar({ profile, email }: TopbarProps) {
             {displayName}
           </span>
         </div>
+
+        {/* Tombol Logout Navbar yang Jelas Kelihatan di Desktop & Mobile */}
+        <LogoutButton variant="topbar" />
       </div>
     </header>
   )
