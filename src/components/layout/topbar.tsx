@@ -6,6 +6,7 @@ import { WorkspaceSwitcher } from '@/components/groups/workspace-switcher'
 import { NotificationBell } from '@/components/notifications/notification-bell'
 import { Avatar } from '@/components/ui/avatar'
 import type { Profile } from '@/types/database'
+import { formatDisplayUsername } from '@/lib/auth-helpers'
 
 export interface TopbarProps {
   profile?: Profile | null
@@ -13,7 +14,7 @@ export interface TopbarProps {
 }
 
 export function Topbar({ profile, email }: TopbarProps) {
-  const displayName = profile?.full_name || email || 'Pengguna'
+  const displayName = profile?.full_name || formatDisplayUsername(email) || 'Pengguna'
 
   return (
     <header className="sticky top-0 z-20 flex h-16 w-full items-center justify-between border-b border-[#1C2538] bg-[#090D16]/90 px-4 backdrop-blur-md sm:px-6">

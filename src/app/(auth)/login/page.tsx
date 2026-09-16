@@ -4,14 +4,15 @@ import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { LogIn, Loader2, ArrowRight } from 'lucide-react'
+import { LogIn, Loader2, ArrowRight, User } from 'lucide-react'
+import { formatAuthIdentifier } from '@/lib/auth-helpers'
 
 function LoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirectTo = searchParams.get('redirectTo') || '/dashboard'
 
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -20,8 +21,9 @@ function LoginForm() {
     e.preventDefault()
     setErrorMsg(null)
 
-    if (!email || !password) {
-      setErrorMsg('Harap isi alamat email dan kata sandi.')
+    const cleanInput = username.trim()
+    if (!cleanInput || !password) {
+      setErrorMsg('Harap isi username dan kata sandi.')
       return
     }
 
@@ -29,14 +31,23 @@ function LoginForm() {
 
     try {
       const supabase = createClient()
+      const emailIdentifier = formatAuthIdentifier(cleanInput)
+
       const { error } = await supabase.auth.signInWithPassword({
-        email,
+        email: emailIdentifier,
         password,
       })
 
       if (error) {
-        if (error.message.includes('Invalid login credentials')) {
-          setErrorMsg('Email atau kata sandi yang kamu masukkan salah.')
+        if (
+          error.message.includes('Invalid login credentials') ||
+          error.message.includes('invalid_credentials')
+        ) {
+          setErrorMsg('Username atau kata sandi yang kamu masukkan salah.')
+        } else if (error.message.includes('Email not confirmed')) {
+          setErrorMsg(
+            'Akun belum aktif. Mohon pastikan opsi "Confirm email" di pengaturan Supabase telah dinonaktifkan.'
+          )
         } else {
           setErrorMsg(error.message)
         }
@@ -76,24 +87,28 @@ function LoginForm() {
         <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
           <div>
             <label
-              htmlFor="email"
+              htmlFor="username"
               className="block text-sm font-medium text-slate-300"
             >
-              Alamat Email
+              Username
             </label>
-            <div className="mt-1">
+            <div className="relative mt-1">
               <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
+                id="username"
+                name="username"
+                type="text"
+                autoComplete="username"
+                autoCapitalize="none"
                 required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="nama@email.com"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Masukkan username (tanpa @)"
                 className="block w-full rounded-lg border border-slate-700 bg-slate-900/80 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
               />
             </div>
+            <p className="mt-1.5 text-[11px] text-slate-400">
+              Cukup gunakan username akunmu, tidak perlu memasukkan email.
+            </p>
           </div>
 
           <div>
@@ -123,7 +138,7 @@ function LoginForm() {
           <button
             type="submit"
             disabled={isLoading}
-            className="group relative flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:cursor-not-allowed disabled:opacity-60"
+            className="group relative flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
           >
             {isLoading ? (
               <>
@@ -145,7 +160,7 @@ function LoginForm() {
             href="/register"
             className="font-medium text-emerald-400 hover:text-emerald-300 underline underline-offset-4"
           >
-            Daftar gratis di sini
+            Daftar dengan username di sini
           </Link>
         </div>
       </div>

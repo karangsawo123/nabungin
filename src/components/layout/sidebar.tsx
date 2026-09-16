@@ -15,6 +15,7 @@ import { LogoutButton } from '@/components/auth/logout-button'
 import { Avatar } from '@/components/ui/avatar'
 import { cn } from '@/lib/utils'
 import type { Profile } from '@/types/database'
+import { formatDisplayUsername } from '@/lib/auth-helpers'
 
 export interface SidebarProps {
   profile?: Profile | null
@@ -57,7 +58,8 @@ export function Sidebar({ profile, email }: SidebarProps) {
     },
   ]
 
-  const displayName = profile?.full_name || email || 'Pengguna'
+  const displayHandle = formatDisplayUsername(email)
+  const displayName = profile?.full_name || displayHandle || 'Pengguna'
 
   return (
     <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 z-30 bg-[#101522] border-r border-[#1C2538]">
@@ -119,7 +121,7 @@ export function Sidebar({ profile, email }: SidebarProps) {
               {displayName}
             </span>
             <span className="text-[11px] text-slate-400 truncate">
-              {email}
+              {displayHandle}
             </span>
           </div>
         </div>

@@ -4,14 +4,16 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { UserPlus, Loader2, ArrowRight, CheckCircle2 } from 'lucide-react'
+import { UserPlus, Loader2, ArrowRight, CheckCircle2, ShieldCheck } from 'lucide-react'
+import { formatAuthIdentifier, validateUsername } from '@/lib/auth-helpers'
 
 export default function RegisterPage() {
   const router = useRouter()
 
   const [fullName, setFullName] = useState('')
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [isSuccess, setIsSuccess] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -20,13 +22,22 @@ export default function RegisterPage() {
     e.preventDefault()
     setErrorMsg(null)
 
-    if (!fullName.trim()) {
-      setErrorMsg('Nama lengkap tidak boleh kosong.')
+    const trimmedName = fullName.trim()
+    const trimmedUsername = username.trim().toLowerCase()
+
+    if (!trimmedUsername) {
+      setErrorMsg('Username wajib diisi.')
       return
     }
 
-    if (!email || !password) {
-      setErrorMsg('Harap isi alamat email dan kata sandi.')
+    const usernameValidation = validateUsername(trimmedUsername)
+    if (!usernameValidation.valid) {
+      setErrorMsg(usernameValidation.message || 'Format username tidak valid.')
+      return
+    }
+
+    if (!password) {
+      setErrorMsg('Kata sandi wajib diisi.')
       return
     }
 
@@ -35,40 +46,60 @@ export default function RegisterPage() {
       return
     }
 
+    if (password !== confirmPassword) {
+      setErrorMsg('Konfirmasi kata sandi tidak cocok. Mohon periksa kembali.')
+      return
+    }
+
     setIsLoading(true)
 
     try {
       const supabase = createClient()
-      // Mengirimkan full_name via metadata agar trigger database PostgreSQL
-      // otomatis membuat profile, personal group default, dan role owner!
+      const internalEmail = formatAuthIdentifier(trimmedUsername)
+      const displayName = trimmedName || trimmedUsername
+
+      // Mengirimkan full_name dan username via user metadata
+      // Trigger PostgreSQL otomatis membuat profile & default personal workspace!
       const { data, error } = await supabase.auth.signUp({
-        email,
+        email: internalEmail,
         password,
         options: {
           data: {
-            full_name: fullName.trim(),
+            full_name: displayName,
+            username: trimmedUsername,
           },
         },
       })
 
       if (error) {
-        setErrorMsg(error.message)
+        if (
+          error.message.toLowerCase().includes('already registered') ||
+          error.message.toLowerCase().includes('already in use')
+        ) {
+          setErrorMsg(
+            `Username "${trimmedUsername}" sudah dipakai orang lain. Silakan pilih username yang berbeda.`
+          )
+        } else if (error.message.toLowerCase().includes('password')) {
+          setErrorMsg('Kata sandi terlalu lemah atau kurang dari 6 karakter.')
+        } else {
+          setErrorMsg(error.message)
+        }
         setIsLoading(false)
         return
       }
 
-      // Jika email confirmation aktif dan session belum dibuat langsung
+      // Jika konfirmasi email di Supabase masih aktif
       if (data.user && !data.session) {
         setIsSuccess(true)
         setIsLoading(false)
         return
       }
 
-      // Jika auto-confirmed, langsung arahkan ke dashboard
+      // Jika auto-confirmed (langsung ada session), arahkan ke dashboard
       router.push('/dashboard')
       router.refresh()
     } catch {
-      setErrorMsg('Terjadi kesalahan koneksi. Silakan coba lagi.')
+      setErrorMsg('Terjadi gangguan jaringan. Silakan coba beberapa saat lagi.')
       setIsLoading(false)
     }
   }
@@ -84,7 +115,7 @@ export default function RegisterPage() {
             Buat Akun Nabungin
           </h2>
           <p className="mt-2 text-sm text-slate-400">
-            Mulai langkah finansialmu dengan ruang tabungan personal & grup
+            Mulai menabung tanpa perlu memasukkan email pribadi
           </p>
         </div>
 
@@ -93,15 +124,14 @@ export default function RegisterPage() {
             <CheckCircle2 className="mx-auto h-8 w-8 text-emerald-400" />
             <h3 className="font-semibold text-emerald-300">Pendaftaran Berhasil!</h3>
             <p className="text-sm text-slate-300">
-              Tautan konfirmasi telah dikirim ke <span className="font-mono text-emerald-300">{email}</span>.
-              Silakan cek emailmu untuk mengaktifkan akun.
+              Akun dengan username <span className="font-mono text-emerald-300">@{username}</span> telah berhasil didaftarkan.
             </p>
             <div className="pt-2">
               <Link
                 href="/login"
-                className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-500 transition-colors"
+                className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-emerald-500 transition-colors cursor-pointer"
               >
-                Kembali ke Halaman Masuk
+                Masuk Sekarang
               </Link>
             </div>
           </div>
@@ -113,20 +143,19 @@ export default function RegisterPage() {
               </div>
             )}
 
-            <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+            <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
               <div>
                 <label
                   htmlFor="fullName"
                   className="block text-sm font-medium text-slate-300"
                 >
-                  Nama Lengkap
+                  Nama Panggilan / Lengkap
                 </label>
                 <div className="mt-1">
                   <input
                     id="fullName"
                     name="fullName"
                     type="text"
-                    required
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="Contoh: Dimas Aditya"
@@ -136,25 +165,32 @@ export default function RegisterPage() {
               </div>
 
               <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-slate-300"
-                >
-                  Alamat Email
-                </label>
+                <div className="flex items-center justify-between">
+                  <label
+                    htmlFor="username"
+                    className="block text-sm font-medium text-slate-300"
+                  >
+                    Username <span className="text-rose-400">*</span>
+                  </label>
+                  <span className="text-[11px] text-slate-400">Tanpa simbol @</span>
+                </div>
                 <div className="mt-1">
                   <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
+                    id="username"
+                    name="username"
+                    type="text"
+                    autoComplete="username"
+                    autoCapitalize="none"
                     required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="nama@email.com"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="contoh: dimas123"
                     className="block w-full rounded-lg border border-slate-700 bg-slate-900/80 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                   />
                 </div>
+                <p className="mt-1 text-[11px] text-slate-400">
+                  Minimal 3 karakter (huruf, angka, titik, atau garis bawah).
+                </p>
               </div>
 
               <div>
@@ -162,7 +198,7 @@ export default function RegisterPage() {
                   htmlFor="password"
                   className="block text-sm font-medium text-slate-300"
                 >
-                  Kata Sandi (Min. 6 Karakter)
+                  Kata Sandi <span className="text-rose-400">*</span>
                 </label>
                 <div className="mt-1">
                   <input
@@ -173,16 +209,43 @@ export default function RegisterPage() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    placeholder="•••••••• (minimal 6 karakter)"
+                    className="block w-full rounded-lg border border-slate-700 bg-slate-900/80 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label
+                  htmlFor="confirmPassword"
+                  className="block text-sm font-medium text-slate-300"
+                >
+                  Ulangi Kata Sandi <span className="text-rose-400">*</span>
+                </label>
+                <div className="mt-1">
+                  <input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type="password"
+                    autoComplete="new-password"
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="••••••••"
                     className="block w-full rounded-lg border border-slate-700 bg-slate-900/80 px-3.5 py-2.5 text-sm text-white placeholder-slate-500 transition-colors focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                   />
                 </div>
               </div>
 
+              <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 p-2.5 text-xs text-emerald-300">
+                <ShieldCheck className="h-4 w-4 shrink-0 text-emerald-400" />
+                <span>Privasi terjaga: Tidak memerlukan email asli Anda.</span>
+              </div>
+
               <button
                 type="submit"
                 disabled={isLoading}
-                className="group relative flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:cursor-not-allowed disabled:opacity-60"
+                className="group relative flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer pt-2.5"
               >
                 {isLoading ? (
                   <>
@@ -191,7 +254,7 @@ export default function RegisterPage() {
                   </>
                 ) : (
                   <>
-                    <span>Daftar Sekarang</span>
+                    <span>Daftar Akun</span>
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                   </>
                 )}
