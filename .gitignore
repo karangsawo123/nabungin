@@ -1,6 +1,7 @@
 # Environment Variables (SANGAT PENTING: JANGAN DI-COMMIT)
 .env
-.env*.local
+.env.*
+!.env.example
 
 # Node & Dependencies
 node_modules/
