@@ -80,9 +80,11 @@ async function runAudit() {
   const hasToken = 'token' in invitesDef;
   const hasExpiresAt = 'expires_at' in invitesDef;
   const hasCatGroupId = 'group_id' in catDef;
+  const hasTransUserId = 'user_id' in transDef;
 
   console.log('- goals.achieved_at:', hasAchievedAt ? '✅' : '❌');
   console.log('- goals.current_amount:', hasCurrentAmount ? '✅' : '❌');
+  console.log('- transactions.user_id (preservation):', hasTransUserId ? '✅' : '❌');
   console.log('- group_invites.token:', hasToken ? '✅' : '❌');
   console.log('- group_invites.expires_at:', hasExpiresAt ? '✅' : '❌');
   console.log('- categories.group_id:', hasCatGroupId ? '✅' : '❌');
