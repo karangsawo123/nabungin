@@ -23,7 +23,7 @@ export function GoalCard({ goal }: GoalCardProps) {
   const visualProgress = Math.min(100, Math.round(validPercent))
   const displayPercent = Math.round(validPercent * 10) / 10
   const remaining = Math.max(0, target - current)
-  const isAchieved = goal.status === 'achieved' || (target > 0 && current >= target)
+  const isAchieved = target > 0 && current >= target
 
   return (
     <Link

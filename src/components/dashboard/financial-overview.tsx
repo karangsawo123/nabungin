@@ -88,10 +88,10 @@ export function FinancialOverview() {
     .filter((tx) => tx.type === 'withdrawal')
     .reduce((sum, tx) => sum + (Number(tx.amount) || 0), 0)
 
-  const activeGoalsCount = goals.filter((g) => g.status === 'active').length
   const achievedGoalsCount = goals.filter(
-    (g) => g.status === 'achieved' || (Number(g.target_amount) > 0 && Number(g.current_amount) >= Number(g.target_amount))
+    (g) => Number(g.target_amount) > 0 && Number(g.current_amount) >= Number(g.target_amount)
   ).length
+  const activeGoalsCount = goals.length - achievedGoalsCount
 
   const rawPercent = totalTarget > 0 ? (totalBalance / totalTarget) * 100 : 0
   const visualProgress = Math.min(100, Math.round(isFinite(rawPercent) ? rawPercent : 0))

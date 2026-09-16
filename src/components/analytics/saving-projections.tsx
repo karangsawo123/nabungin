@@ -20,9 +20,13 @@ interface SavingProjectionsProps {
 }
 
 export function SavingProjections({ projections, className = '' }: SavingProjectionsProps) {
-  // Cek apakah ada goal yang sudah tercapai untuk Celebration Banner
-  const achievedGoals = projections.filter((p) => p.isAchieved)
-  const activeProjections = projections.filter((p) => !p.isAchieved)
+  // Cek apakah ada goal yang sudah tercapai untuk Celebration Banner (ketat: uang harus >= target)
+  const achievedGoals = projections.filter(
+    (p) => p.isAchieved && p.targetAmount > 0 && p.currentAmount >= p.targetAmount
+  )
+  const activeProjections = projections.filter(
+    (p) => !p.isAchieved || p.targetAmount <= 0 || p.currentAmount < p.targetAmount
+  )
 
   if (projections.length === 0) {
     return null

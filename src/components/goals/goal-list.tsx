@@ -96,7 +96,7 @@ export function GoalList({ initialGoals = [], initialWorkspaceId }: GoalListProp
   const totalTarget = goals.reduce((sum, g) => sum + (Number(g.target_amount) || 0), 0)
   const totalCurrent = goals.reduce((sum, g) => sum + (Number(g.current_amount) || 0), 0)
   const achievedCount = goals.filter(
-    (g) => g.status === 'achieved' || (Number(g.target_amount) > 0 && Number(g.current_amount) >= Number(g.target_amount))
+    (g) => Number(g.target_amount) > 0 && Number(g.current_amount) >= Number(g.target_amount)
   ).length
 
   return (

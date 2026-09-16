@@ -153,6 +153,7 @@ export async function createTransactionAction(
   revalidatePath('/dashboard')
   revalidatePath('/goals')
   revalidatePath(`/goals/${input.goalId}`)
+  revalidatePath('/analytics')
 
   return { success: true, transaction: newTx }
 }

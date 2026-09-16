@@ -279,7 +279,7 @@ export async function getWorkspaceAnalyticsAction(
     const targetAmt = Number(goal.target_amount) || 0
     const currentAmt = Number(goal.current_amount) || 0
     const remainingAmt = Math.max(0, targetAmt - currentAmt)
-    const isAchieved = currentAmt >= targetAmt || goal.status === 'achieved'
+    const isAchieved = targetAmt > 0 && currentAmt >= targetAmt
     const percentProgress =
       targetAmt > 0 ? Math.min(100, Math.round((currentAmt / targetAmt) * 100)) : 0
 
