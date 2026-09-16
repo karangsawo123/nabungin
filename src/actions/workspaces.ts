@@ -74,11 +74,17 @@ export async function createSharedWorkspaceAction(
     }
   }
 
-  // 4. Inisialisasi kategori bawaan untuk Shared Workspace
+  // 4. Inisialisasi kategori bawaan untuk Shared Workspace (Setoran & Penarikan)
   await supabase.from('categories').insert([
+    // Kategori Setoran
     { group_id: groupId, name: 'Patungan Bersama', icon: 'wallet', color: '#10B981' },
+    { group_id: groupId, name: 'Bonus & Hadiah', icon: 'gift', color: '#06B6D4' },
+    { group_id: groupId, name: 'Sisa Belanja', icon: 'piggy-bank', color: '#F59E0B' },
+    // Kategori Penarikan & Pengeluaran
+    { group_id: groupId, name: 'Pencairan / Realisasi Target', icon: 'shopping-bag', color: '#10B981' },
     { group_id: groupId, name: 'Operasional', icon: 'tag', color: '#3B82F6' },
-    { group_id: groupId, name: 'Dana Darurat Grup', icon: 'piggy-bank', color: '#F59E0B' },
+    { group_id: groupId, name: 'Biaya Medis / Darurat', icon: 'heart', color: '#F43F5E' },
+    { group_id: groupId, name: 'Perbaikan / Servis', icon: 'car', color: '#8B5CF6' },
   ])
 
   // 5. Query group data yang baru dibuat (sekarang SELECT lolos RLS karena user sudah terdaftar di group_members)
