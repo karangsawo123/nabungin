@@ -23,7 +23,7 @@ export function MobileNav() {
     },
     {
       label: 'Tabungan',
-      href: '#goals',
+      href: '/goals',
       icon: Target,
       active: pathname.startsWith('/goals'),
     },

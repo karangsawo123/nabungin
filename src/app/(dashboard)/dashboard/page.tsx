@@ -2,18 +2,15 @@ import { createClient } from '@/lib/supabase/server'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { EmptyState } from '@/components/ui/empty-state'
 import { Button } from '@/components/ui/button'
 import {
-  Wallet,
-  Target,
   ArrowUpRight,
   ArrowDownLeft,
-  Sparkles,
   ShieldCheck,
   Calendar,
 } from 'lucide-react'
 import { ActiveWorkspaceSummary } from '@/components/groups/active-workspace-summary'
+import { GoalList } from '@/components/goals/goal-list'
 import { formatRupiah } from '@/lib/utils'
 
 export default async function DashboardPage() {
@@ -110,33 +107,8 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* 3. Section Target Tabungan / Goals (Empty State Representation) */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Target className="h-5 w-5 text-emerald-400" />
-            <h2 className="text-lg font-bold text-white tracking-tight sm:text-xl">
-              Target Tabungan Aktif
-            </h2>
-          </div>
-          <Button variant="outline" size="sm">
-            <span>+ Buat Target</span>
-          </Button>
-        </div>
-
-        {/* Empty State Component sesuai instruksi */}
-        <EmptyState
-          icon={Wallet}
-          title="Belum Ada Target Tabungan"
-          description="Kamu belum memiliki target tabungan aktif. Pada modul berikutnya, kamu dapat membuat target seperti Dana Darurat atau Liburan."
-          action={
-            <Button variant="primary" size="md">
-              <Sparkles className="h-4 w-4 mr-1.5" />
-              Siapkan Target Pertama (Modul Goals)
-            </Button>
-          }
-        />
-      </div>
+      {/* 3. Section Target Tabungan / Goals Terkoneksi Active Workspace */}
+      <GoalList />
 
       {/* 4. Showcase Visual Primitives & Financial Semantic Tokens */}
       <Card>

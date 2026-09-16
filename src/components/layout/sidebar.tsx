@@ -33,7 +33,7 @@ export function Sidebar({ profile, email }: SidebarProps) {
     },
     {
       label: 'Tabungan / Goals',
-      href: '#goals',
+      href: '/goals',
       icon: Target,
       active: pathname.startsWith('/goals'),
       badge: 'V1',
