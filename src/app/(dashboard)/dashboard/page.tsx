@@ -1,153 +1,203 @@
-import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { LogoutButton } from '@/components/auth/logout-button'
-import { Wallet, User as UserIcon, ShieldCheck, CheckCircle2 } from 'lucide-react'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
+import { EmptyState } from '@/components/ui/empty-state'
+import { Button } from '@/components/ui/button'
+import {
+  Wallet,
+  Target,
+  ArrowUpRight,
+  ArrowDownLeft,
+  Sparkles,
+  ShieldCheck,
+  Calendar,
+} from 'lucide-react'
+import { formatRupiah } from '@/lib/utils'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
-
-  // Verifikasi session server-side
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (!user) {
-    redirect('/login')
-  }
-
-  // Ambil data profile
   const { data: profile } = await supabase
     .from('profiles')
     .select('*')
-    .eq('id', user.id)
+    .eq('id', user?.id || '')
     .single()
 
-  // Ambil data group / workspace tempat user terdaftar
-  const { data: memberships } = await supabase
-    .from('group_members')
-    .select('role, groups (*)')
-    .eq('user_id', user.id)
+  const displayName = profile?.full_name || 'Penabung'
 
   return (
-    <div className="min-h-screen bg-[#0B0F19] text-slate-100">
-      {/* Header / Navbar Sederhana */}
-      <header className="border-b border-slate-800 bg-[#111827]/80 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
+    <div className="space-y-8">
+      {/* 1. Header Ringkas Sambutan */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#1C2538] pb-6">
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-xs font-semibold uppercase tracking-wider text-emerald-400">
+              Nabungin Foundation
+            </span>
+            <span className="h-1 w-1 rounded-full bg-slate-600" />
+            <span className="text-xs text-slate-400 flex items-center gap-1">
+              <Calendar className="h-3 w-3" />
+              {new Date().toLocaleDateString('id-ID', {
+                month: 'long',
+                year: 'numeric',
+              })}
+            </span>
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
+            Halo, {displayName}! 👋
+          </h1>
+          <p className="mt-1 text-sm text-slate-400">
+            Fondasi Design System dan App Shell Nabungin telah aktif dan siap digunakan.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2.5">
+          <Badge variant="brand" className="py-1 px-3">
+            <ShieldCheck className="h-3.5 w-3.5 mr-1" />
+            Design System Ready
+          </Badge>
+        </div>
+      </div>
+
+      {/* 2. Hero Total Tabungan Card (Fintech Inspiration) */}
+      <div className="rounded-3xl border border-[#1C2538] bg-gradient-to-b from-[#141A2A] to-[#0E1320] p-6 sm:p-8 shadow-xl relative overflow-hidden">
+        {/* Subtle Accent Glow */}
+        <div className="absolute top-0 right-0 -mt-8 -mr-8 h-48 w-48 rounded-full bg-emerald-500/5 blur-3xl pointer-events-none" />
+
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 relative z-10">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">
+                Total Akumulasi Tabungan
+              </span>
+              <Badge variant="personal">Personal Workspace</Badge>
+            </div>
+            <div className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white font-mono">
+              {formatRupiah(0)}
+            </div>
+            <p className="text-xs text-slate-400">
+              Saldo otomatis dihitung dari mutasi ledger (SUM deposit - withdrawal).
+            </p>
+          </div>
+
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-              <Wallet className="h-5 w-5" />
-            </div>
-            <div>
-              <span className="text-lg font-bold text-white tracking-tight">
-                Nabungin
-              </span>
-              <span className="ml-2 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-medium text-emerald-400 border border-emerald-500/20">
-                Auth V1 Aktif
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <div className="hidden text-right sm:block">
-              <p className="text-sm font-medium text-white">
-                {profile?.full_name || user.email}
-              </p>
-              <p className="text-xs text-slate-400">{user.email}</p>
-            </div>
-            <LogoutButton />
+            <Button
+              variant="deposit"
+              size="md"
+              className="flex-1 sm:flex-initial"
+              onClick={undefined}
+            >
+              <ArrowDownLeft className="h-4 w-4" />
+              <span>+ Setor (Deposit)</span>
+            </Button>
+            <Button
+              variant="destructive"
+              size="md"
+              className="flex-1 sm:flex-initial"
+              onClick={undefined}
+            >
+              <ArrowUpRight className="h-4 w-4" />
+              <span>- Tarik (Withdraw)</span>
+            </Button>
           </div>
         </div>
-      </header>
+      </div>
 
-      {/* Konten Dashboard Sederhana */}
-      <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <div className="space-y-6">
-          {/* Welcome Card */}
-          <div className="rounded-2xl border border-slate-800 bg-[#111827] p-6 sm:p-8 shadow-xl">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div>
-                <h1 className="text-2xl font-bold text-white sm:text-3xl">
-                  Selamat Datang, {profile?.full_name || 'Pengguna'}! 👋
-                </h1>
-                <p className="mt-1 text-slate-400 text-sm">
-                  Sesi autentikasi berhasil diverifikasi dan terhubung ke Supabase secara aman.
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2 rounded-xl bg-emerald-950/40 border border-emerald-500/30 px-3.5 py-2 text-emerald-400 text-xs font-medium self-start sm:self-auto">
-                <CheckCircle2 className="h-4 w-4" />
-                <span>Session Active (SSR Guard)</span>
-              </div>
-            </div>
+      {/* 3. Section Target Tabungan / Goals (Empty State Representation) */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Target className="h-5 w-5 text-emerald-400" />
+            <h2 className="text-lg font-bold text-white tracking-tight sm:text-xl">
+              Target Tabungan Aktif
+            </h2>
           </div>
-
-          {/* Grid Status Profil & Workspace Otomatis */}
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            {/* Kartu Profil Database */}
-            <div className="rounded-xl border border-slate-800 bg-[#111827] p-6">
-              <div className="flex items-center gap-3 border-b border-slate-800 pb-4">
-                <UserIcon className="h-5 w-5 text-emerald-400" />
-                <h2 className="font-semibold text-white">Data Profil (Database)</h2>
-              </div>
-              <dl className="mt-4 space-y-3 text-sm">
-                <div>
-                  <dt className="text-slate-500">Nama Lengkap</dt>
-                  <dd className="font-medium text-slate-200">
-                    {profile?.full_name || '-'}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-slate-500">User ID (auth.users)</dt>
-                  <dd className="font-mono text-xs text-slate-400 break-all">
-                    {user.id}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-slate-500">Email Terdaftar</dt>
-                  <dd className="text-slate-200">{user.email}</dd>
-                </div>
-              </dl>
-            </div>
-
-            {/* Kartu Workspace yang dibuat otomatis via Trigger */}
-            <div className="rounded-xl border border-slate-800 bg-[#111827] p-6">
-              <div className="flex items-center gap-3 border-b border-slate-800 pb-4">
-                <ShieldCheck className="h-5 w-5 text-emerald-400" />
-                <h2 className="font-semibold text-white">
-                  Workspace Aktif ({memberships?.length || 0})
-                </h2>
-              </div>
-
-              <div className="mt-4 space-y-3">
-                {memberships && memberships.length > 0 ? (
-                  memberships.map((m, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center justify-between rounded-lg border border-slate-800 bg-slate-900/60 p-3 text-sm"
-                    >
-                      <div>
-                        <p className="font-medium text-white">
-                          {m.groups?.name || 'Workspace'}
-                        </p>
-                        <p className="text-xs text-slate-400 capitalize">
-                          Tipe: {m.groups?.type}
-                        </p>
-                      </div>
-                      <span className="rounded bg-emerald-500/10 px-2 py-1 text-xs font-medium text-emerald-400 border border-emerald-500/20 uppercase">
-                        {m.role}
-                      </span>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-sm text-slate-500">
-                    Belum ada workspace terdaftar.
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
+          <Button variant="outline" size="sm">
+            <span>+ Buat Target</span>
+          </Button>
         </div>
-      </main>
+
+        {/* Empty State Component sesuai instruksi */}
+        <EmptyState
+          icon={Wallet}
+          title="Belum Ada Target Tabungan"
+          description="Kamu belum memiliki target tabungan aktif. Pada modul berikutnya, kamu dapat membuat target seperti Dana Darurat atau Liburan."
+          action={
+            <Button variant="primary" size="md">
+              <Sparkles className="h-4 w-4 mr-1.5" />
+              Siapkan Target Pertama (Modul Goals)
+            </Button>
+          }
+        />
+      </div>
+
+      {/* 4. Showcase Visual Primitives & Financial Semantic Tokens */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Spesifikasi Visual & Primitif Design System</CardTitle>
+          <CardDescription>
+            Standar token semantik finansial yang akan menjaga konsistensi visual di seluruh modul berikutnya.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Financial Semantic Badges */}
+          <div>
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 block mb-3">
+              Semantik Warna Finansial (Accessible Contrast + Teks Simbolik)
+            </span>
+            <div className="flex flex-wrap gap-2.5">
+              <Badge variant="deposit">+ Rp 500.000 (Deposit / Setor)</Badge>
+              <Badge variant="withdrawal">- Rp 200.000 (Withdrawal / Tarik)</Badge>
+              <Badge variant="milestone">🎉 Target 100% Tercapai (Milestone)</Badge>
+              <Badge variant="personal">Personal Workspace</Badge>
+              <Badge variant="shared">Shared Group</Badge>
+              <Badge variant="outline">Role: Owner</Badge>
+            </div>
+          </div>
+
+          {/* Progress Bar Component */}
+          <div>
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 block mb-3">
+              Komponen Progress Bar (Accessible ARIA Progress)
+            </span>
+            <div className="space-y-3 max-w-xl">
+              <Progress value={65} showLabel variant="emerald" />
+              <Progress value={100} showLabel variant="amber" />
+            </div>
+          </div>
+
+          {/* Button Variants */}
+          <div>
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 block mb-3">
+              Varian Tombol Primitif (Keyboard Focused, Accessible Tap Targets)
+            </span>
+            <div className="flex flex-wrap gap-2.5">
+              <Button variant="primary" size="sm">
+                Primary Button
+              </Button>
+              <Button variant="secondary" size="sm">
+                Secondary Button
+              </Button>
+              <Button variant="outline" size="sm">
+                Outline Button
+              </Button>
+              <Button variant="destructive" size="sm">
+                Destructive Button
+              </Button>
+              <Button variant="ghost" size="sm">
+                Ghost Button
+              </Button>
+              <Button variant="primary" size="sm" isLoading>
+                Loading
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }
