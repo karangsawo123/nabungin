@@ -34,7 +34,7 @@ export function CreateTransactionDialog({
   defaultGoalId,
   onSuccess,
 }: CreateTransactionDialogProps) {
-  const { activeGroupId, activeGroup } = useWorkspace()
+  const { activeGroupId, activeGroup, triggerRefresh } = useWorkspace()
 
   const [type, setType] = React.useState<TransactionType>(defaultType)
   const [goalId, setGoalId] = React.useState(defaultGoalId || '')
@@ -145,6 +145,7 @@ export function CreateTransactionDialog({
         return
       }
 
+      triggerRefresh()
       onSuccess?.(result.transaction)
       handleClose()
     } catch {

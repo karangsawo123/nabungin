@@ -66,6 +66,16 @@ export function GoalDetailView({
     loadTransactions()
   }, [loadTransactions])
 
+  React.useEffect(() => {
+    const handleGlobalRefresh = () => {
+      loadTransactions()
+    }
+    window.addEventListener('nabungin:refresh', handleGlobalRefresh)
+    return () => {
+      window.removeEventListener('nabungin:refresh', handleGlobalRefresh)
+    }
+  }, [loadTransactions])
+
   const current = Number(goal.current_amount) || 0
   const target = Number(goal.target_amount) || 0
 

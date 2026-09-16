@@ -27,7 +27,7 @@ import { formatRupiah, formatDate } from '@/lib/utils'
 import type { Goal, TransactionType } from '@/types/database'
 
 export function FinancialOverview() {
-  const { activeGroupId, activeGroup } = useWorkspace()
+  const { activeGroupId, activeGroup, refreshKey } = useWorkspace()
 
   const [goals, setGoals] = React.useState<Goal[]>([])
   const [transactions, setTransactions] = React.useState<TransactionWithDetails[]>([])
@@ -37,6 +37,16 @@ export function FinancialOverview() {
   const [isDialogOpen, setIsDialogOpen] = React.useState(false)
   const [dialogType, setDialogType] = React.useState<TransactionType>('deposit')
   const [refreshTrigger, setRefreshTrigger] = React.useState(0)
+
+  React.useEffect(() => {
+    const handleGlobalRefresh = () => {
+      setRefreshTrigger((c) => c + 1)
+    }
+    window.addEventListener('nabungin:refresh', handleGlobalRefresh)
+    return () => {
+      window.removeEventListener('nabungin:refresh', handleGlobalRefresh)
+    }
+  }, [])
 
   React.useEffect(() => {
     let isCancelled = false
@@ -64,7 +74,7 @@ export function FinancialOverview() {
     return () => {
       isCancelled = true
     }
-  }, [activeGroupId, refreshTrigger])
+  }, [activeGroupId, refreshTrigger, refreshKey])
 
   // Agregasi Keuangan Nyata
   const totalTarget = goals.reduce((sum, g) => sum + (Number(g.target_amount) || 0), 0)

@@ -21,12 +21,23 @@ export function AnalyticsSection({
   isPersonal: propIsPersonal,
   className = '',
 }: AnalyticsSectionProps) {
-  const { activeGroupId, isPersonal: contextIsPersonal } = useWorkspace()
+  const { activeGroupId, isPersonal: contextIsPersonal, refreshKey } = useWorkspace()
   const workspaceId = propWorkspaceId || activeGroupId
   const isPersonal = propIsPersonal !== undefined ? propIsPersonal : contextIsPersonal
 
   const [data, setData] = React.useState<WorkspaceAnalyticsData | null>(null)
   const [loading, setLoading] = React.useState(true)
+  const [localTrigger, setLocalTrigger] = React.useState(0)
+
+  React.useEffect(() => {
+    const handleGlobalRefresh = () => {
+      setLocalTrigger((c) => c + 1)
+    }
+    window.addEventListener('nabungin:refresh', handleGlobalRefresh)
+    return () => {
+      window.removeEventListener('nabungin:refresh', handleGlobalRefresh)
+    }
+  }, [])
 
   React.useEffect(() => {
     let isMounted = true
@@ -53,7 +64,7 @@ export function AnalyticsSection({
     return () => {
       isMounted = false
     }
-  }, [workspaceId])
+  }, [workspaceId, refreshKey, localTrigger])
 
   if (loading) {
     return (

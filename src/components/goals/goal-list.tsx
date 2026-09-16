@@ -19,7 +19,7 @@ export interface GoalListProps {
 }
 
 export function GoalList({ initialGoals = [], initialWorkspaceId }: GoalListProps) {
-  const { activeGroupId, activeGroup } = useWorkspace()
+  const { activeGroupId, activeGroup, refreshKey } = useWorkspace()
 
   const [prevWorkspaceId, setPrevWorkspaceId] = React.useState(activeGroupId)
   const [goals, setGoals] = React.useState<Goal[]>(() => {
@@ -31,6 +31,16 @@ export function GoalList({ initialGoals = [], initialWorkspaceId }: GoalListProp
   const [error, setError] = React.useState<string | null>(null)
   const [isCreateOpen, setIsCreateOpen] = React.useState(false)
   const [refreshTrigger, setRefreshTrigger] = React.useState(0)
+
+  React.useEffect(() => {
+    const handleGlobalRefresh = () => {
+      setRefreshTrigger((c) => c + 1)
+    }
+    window.addEventListener('nabungin:refresh', handleGlobalRefresh)
+    return () => {
+      window.removeEventListener('nabungin:refresh', handleGlobalRefresh)
+    }
+  }, [])
 
   // Pola React resmi: sinkronisasi state saat props/activeGroupId berganti
   if (prevWorkspaceId !== activeGroupId) {
@@ -49,8 +59,13 @@ export function GoalList({ initialGoals = [], initialWorkspaceId }: GoalListProp
     let isCancelled = false
     if (!activeGroupId) return
 
-    // Jika sama dengan inisial dan belum ada pemicu refresh manual, gunakan inisial
-    if (activeGroupId === initialWorkspaceId && initialGoals.length > 0 && refreshTrigger === 0) {
+    // Jika sama dengan inisial dan belum ada pemicu refresh, gunakan inisial
+    if (
+      activeGroupId === initialWorkspaceId &&
+      initialGoals.length > 0 &&
+      refreshTrigger === 0 &&
+      refreshKey === 0
+    ) {
       return
     }
 
@@ -71,7 +86,7 @@ export function GoalList({ initialGoals = [], initialWorkspaceId }: GoalListProp
     return () => {
       isCancelled = true
     }
-  }, [activeGroupId, initialWorkspaceId, initialGoals.length, refreshTrigger])
+  }, [activeGroupId, initialWorkspaceId, initialGoals.length, refreshTrigger, refreshKey])
 
   const handleGoalCreated = (newGoal: Goal) => {
     setGoals((prev) => [newGoal, ...prev])

@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
 import { setActiveWorkspaceCookieAction } from '@/actions/workspaces'
 import type { Group, MemberRole } from '@/types/database'
 
@@ -17,6 +18,8 @@ interface WorkspaceContextValue {
   activeRole: MemberRole | null
   isOwner: boolean
   isPersonal: boolean
+  refreshKey: number
+  triggerRefresh: () => void
   setActiveWorkspaceId: (groupId: string) => Promise<void>
   addWorkspace: (group: Group, role: MemberRole) => void
 }
@@ -37,6 +40,7 @@ export function WorkspaceProvider({
   children,
 }: WorkspaceProviderProps) {
   const router = useRouter()
+  const [refreshKey, setRefreshKey] = React.useState(0)
   const [prevMemberships, setPrevMemberships] = React.useState<WorkspaceMembership[]>(
     initialMemberships
   )
@@ -97,6 +101,52 @@ export function WorkspaceProvider({
     setActiveGroupIdState(group.id)
   }, [])
 
+  const triggerRefresh = React.useCallback(() => {
+    setRefreshKey((k) => k + 1)
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('nabungin:refresh'))
+    }
+    router.refresh()
+  }, [router])
+
+  // Realtime synchronization untuk active workspace
+  React.useEffect(() => {
+    if (!activeGroupId) return
+    const supabase = createClient()
+
+    // Dengarkan mutasi transaksi pada workspace aktif
+    const channel = supabase
+      .channel(`workspace-sync-${activeGroupId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'transactions',
+        },
+        () => {
+          triggerRefresh()
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'goals',
+          filter: `group_id=eq.${activeGroupId}`,
+        },
+        () => {
+          triggerRefresh()
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [activeGroupId, triggerRefresh])
+
   const value = React.useMemo(
     () => ({
       memberships,
@@ -105,6 +155,8 @@ export function WorkspaceProvider({
       activeRole,
       isOwner,
       isPersonal,
+      refreshKey,
+      triggerRefresh,
       setActiveWorkspaceId,
       addWorkspace,
     }),
@@ -115,6 +167,8 @@ export function WorkspaceProvider({
       activeRole,
       isOwner,
       isPersonal,
+      refreshKey,
+      triggerRefresh,
       setActiveWorkspaceId,
       addWorkspace,
     ]

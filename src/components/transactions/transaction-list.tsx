@@ -41,7 +41,7 @@ export function TransactionList({
   initialTransactions = [],
   initialWorkspaceId,
 }: TransactionListProps) {
-  const { activeGroupId, activeGroup } = useWorkspace()
+  const { activeGroupId, activeGroup, refreshKey } = useWorkspace()
 
   const [prevWorkspaceId, setPrevWorkspaceId] = React.useState(activeGroupId)
   const [transactions, setTransactions] = React.useState<TransactionWithDetails[]>(() => {
@@ -61,6 +61,16 @@ export function TransactionList({
   const [searchQuery, setSearchQuery] = React.useState('')
   const [filterType, setFilterType] = React.useState<'all' | 'deposit' | 'withdrawal'>('all')
 
+  React.useEffect(() => {
+    const handleGlobalRefresh = () => {
+      setRefreshTrigger((c) => c + 1)
+    }
+    window.addEventListener('nabungin:refresh', handleGlobalRefresh)
+    return () => {
+      window.removeEventListener('nabungin:refresh', handleGlobalRefresh)
+    }
+  }, [])
+
   if (prevWorkspaceId !== activeGroupId) {
     setPrevWorkspaceId(activeGroupId)
     if (activeGroupId === initialWorkspaceId) {
@@ -77,7 +87,12 @@ export function TransactionList({
     let isCancelled = false
     if (!activeGroupId) return
 
-    if (activeGroupId === initialWorkspaceId && initialTransactions.length > 0 && refreshTrigger === 0) {
+    if (
+      activeGroupId === initialWorkspaceId &&
+      initialTransactions.length > 0 &&
+      refreshTrigger === 0 &&
+      refreshKey === 0
+    ) {
       return
     }
 
@@ -98,7 +113,7 @@ export function TransactionList({
     return () => {
       isCancelled = true
     }
-  }, [activeGroupId, initialWorkspaceId, initialTransactions.length, refreshTrigger])
+  }, [activeGroupId, initialWorkspaceId, initialTransactions.length, refreshTrigger, refreshKey])
 
   const openDeposit = () => {
     setDialogType('deposit')
