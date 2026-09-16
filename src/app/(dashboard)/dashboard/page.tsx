@@ -13,6 +13,7 @@ import {
   ShieldCheck,
   Calendar,
 } from 'lucide-react'
+import { ActiveWorkspaceSummary } from '@/components/groups/active-workspace-summary'
 import { formatRupiah } from '@/lib/utils'
 
 export default async function DashboardPage() {
@@ -30,7 +31,7 @@ export default async function DashboardPage() {
   const displayName = profile?.full_name || 'Penabung'
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* 1. Header Ringkas Sambutan */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#1C2538] pb-6">
         <div>
@@ -51,17 +52,20 @@ export default async function DashboardPage() {
             Halo, {displayName}! 👋
           </h1>
           <p className="mt-1 text-sm text-slate-400">
-            Fondasi Design System dan App Shell Nabungin telah aktif dan siap digunakan.
+            Kelola ruang tabungan personal dan kolaboratif Anda secara aman dan terisolasi.
           </p>
         </div>
 
         <div className="flex items-center gap-2.5">
           <Badge variant="brand" className="py-1 px-3">
             <ShieldCheck className="h-3.5 w-3.5 mr-1" />
-            Design System Ready
+            Workspace Active
           </Badge>
         </div>
       </div>
+
+      {/* 2. Indikator & Ringkasan Workspace Aktif */}
+      <ActiveWorkspaceSummary />
 
       {/* 2. Hero Total Tabungan Card (Fintech Inspiration) */}
       <div className="rounded-3xl border border-[#1C2538] bg-gradient-to-b from-[#141A2A] to-[#0E1320] p-6 sm:p-8 shadow-xl relative overflow-hidden">
@@ -72,9 +76,8 @@ export default async function DashboardPage() {
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">
-                Total Akumulasi Tabungan
+                Total Akumulasi Saldo Tabungan
               </span>
-              <Badge variant="personal">Personal Workspace</Badge>
             </div>
             <div className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white font-mono">
               {formatRupiah(0)}

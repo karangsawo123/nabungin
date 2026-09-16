@@ -2,25 +2,16 @@
 
 import * as React from 'react'
 import { Bell, Wallet } from 'lucide-react'
-import { WorkspaceSwitcher, type WorkspaceMembership } from '@/components/groups/workspace-switcher'
+import { WorkspaceSwitcher } from '@/components/groups/workspace-switcher'
 import { Avatar } from '@/components/ui/avatar'
 import type { Profile } from '@/types/database'
 
 export interface TopbarProps {
   profile?: Profile | null
   email?: string
-  memberships: WorkspaceMembership[]
-  activeGroupId?: string
-  onSelectGroup?: (groupId: string) => void
 }
 
-export function Topbar({
-  profile,
-  email,
-  memberships,
-  activeGroupId,
-  onSelectGroup,
-}: TopbarProps) {
+export function Topbar({ profile, email }: TopbarProps) {
   const displayName = profile?.full_name || email || 'Pengguna'
 
   return (
@@ -35,11 +26,7 @@ export function Topbar({
         </div>
 
         {/* Workspace Switcher */}
-        <WorkspaceSwitcher
-          memberships={memberships}
-          activeGroupId={activeGroupId}
-          onSelectGroup={onSelectGroup}
-        />
+        <WorkspaceSwitcher />
       </div>
 
       {/* Right: Actions & Profile */}
