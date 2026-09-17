@@ -16,6 +16,7 @@ import { Avatar } from '@/components/ui/avatar'
 import { cn } from '@/lib/utils'
 import type { Profile } from '@/types/database'
 import { formatDisplayUsername } from '@/lib/auth-helpers'
+import { Logo } from '@/components/brand/logo'
 
 export interface SidebarProps {
   profile?: Profile | null
@@ -63,19 +64,9 @@ export function Sidebar({ profile, email }: SidebarProps) {
 
   return (
     <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 z-30 bg-[#101522] border-r border-[#1C2538]">
-      {/* Brand Header */}
-      <div className="flex h-16 items-center gap-3 px-6 border-b border-[#1C2538]">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400">
-          <Wallet className="h-5 w-5" />
-        </div>
-        <div className="flex flex-col">
-          <span className="text-base font-bold text-white tracking-tight">
-            Nabungin
-          </span>
-          <span className="text-[10px] uppercase tracking-wider font-semibold text-emerald-400">
-            Financial Studio
-          </span>
-        </div>
+      {/* Brand Header with Option 2 Logo */}
+      <div className="flex h-16 items-center px-5 border-b border-[#1C2538]">
+        <Logo variant="horizontal" size="sm" />
       </div>
 
       {/* Nav List */}

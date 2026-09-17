@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 140" fill="none">
+  <!-- Group Mark at (20, 10) scaled -->
+  <g transform="translate(15, 10) scale(0.6)">
+    <!-- Left Speech Bubble (Emerald Green) -->
+    <path d="M90 35 C52 35 25 62 25 98 C25 116 33 133 46 145 L35 168 L68 158 C75 160 82 161 90 161 C128 161 155 134 155 98 C155 62 128 35 90 35 Z" fill="#10B981" />
+    
+    <!-- Right Speech Bubble (Warm Amber) -->
+    <path d="M120 70 C108 70 98 73 90 78 C98 87 103 98 103 110 C103 128 92 143 76 150 C86 157 98 160 110 160 C118 160 125 158 132 156 L165 166 L154 143 C167 131 175 114 175 96 C175 60 148 70 120 70 Z" fill="#F59E0B" />
+    
+    <!-- Golden Coin in Center Overlap -->
+    <circle cx="102" cy="120" r="22" fill="#F59E0B" stroke="#FFFFFF" stroke-width="4" />
+    <circle cx="102" cy="120" r="16" fill="#D97706" />
+    
+    <!-- Sprouting Plant Stem & Leaves (White/Mint Inner Seedling) -->
+    <path d="M96 128 C96 112 90 98 80 92 C88 88 102 90 100 108" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" fill="none" />
+    <path d="M78 92 C72 82 82 72 94 76 C94 88 86 94 78 92 Z" fill="#FFFFFF" />
+    <path d="M96 82 C104 74 114 80 112 92 C102 92 98 86 96 82 Z" fill="#FFFFFF" />
+
+    <!-- Upper Green Sprout (Rising from between bubbles) -->
+    <path d="M102 65 C102 45 110 32 118 22" stroke="#10B981" stroke-width="5" stroke-linecap="round" fill="none" />
+    <!-- Upper Left Leaf -->
+    <path d="M116 26 C102 18 90 28 94 40 C106 42 116 34 116 26 Z" fill="#10B981" />
+    <!-- Upper Right Leaf -->
+    <path d="M118 22 C132 14 144 24 140 36 C128 38 118 30 118 22 Z" fill="#10B981" />
+  </g>
+
+  <!-- Wordmark "Nabungin" in Warm Amber -->
+  <text x="145" y="78" font-family="system-ui, -apple-system, sans-serif" font-size="52" font-weight="900" fill="#F59E0B" letter-spacing="-1">Nabungin</text>
+  <!-- Slogan in Emerald Green -->
+  <text x="148" y="102" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="700" fill="#10B981" letter-spacing="1">Nabung bersama, tumbuh bersama.</text>
+</svg>
