@@ -1,673 +1,1566 @@
 <!DOCTYPE html>
-<html lang="id" class="dark scroll-smooth">
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nabungin — 3 Opsi Konsep Landing Page</title>
-  <!-- Google Fonts: Plus Jakarta Sans -->
+  <title>Nabungin — 3 Opsi Landing Page</title>
+  <meta name="description" content="Nabungin adalah platform pencatatan tabungan personal dan kolaboratif berbasis web. Buat target finansial terpisah, catat setoran dan penarikan secara transparan, dan pantau progres bersama." />
+
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-  
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-          },
-          colors: {
-            bgDark: '#090D16',
-            cardDark: '#101522',
-            cardHover: '#141A2A',
-            borderDark: '#1C2538',
-            emeraldAccent: '#10B981',
-          }
-        }
-      }
-    }
-  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
 
   <style>
+    /* =========================================================
+       DESIGN TOKENS
+       Palette: Deep Teal bg + Emerald accent + Slate surface
+       Chosen for "financial growth" semantics, not AI default
+    ========================================================= */
+    :root {
+      --bg: #08111e;
+      --bg-alt: #0c1624;
+      --surface: #111d2e;
+      --surface-alt: #152135;
+      --border: #1e3048;
+      --border-hover: #2c4566;
+
+      --text-primary: #e8f0fc;
+      --text-secondary: #7a97bb;
+      --text-muted: #4a6480;
+
+      --accent: #10b981;
+      --accent-dim: rgba(16, 185, 129, 0.12);
+      --accent-border: rgba(16, 185, 129, 0.28);
+      --accent-hover: #0ea472;
+
+      --amber: #f59e0b;
+      --amber-dim: rgba(245, 158, 11, 0.12);
+      --amber-border: rgba(245, 158, 11, 0.3);
+
+      --rose: #f43f5e;
+      --rose-dim: rgba(244, 63, 94, 0.1);
+      --rose-border: rgba(244, 63, 94, 0.28);
+
+      --blue: #60a5fa;
+      --blue-dim: rgba(96, 165, 250, 0.1);
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 22px;
+      --radius-xl: 30px;
+
+      --font-head: 'Plus Jakarta Sans', sans-serif;
+      --font-body: 'Inter', 'Plus Jakarta Sans', sans-serif;
+
+      --shadow-card: 0 4px 24px rgba(0,0,0,0.35);
+      --shadow-glow: 0 0 40px rgba(16,185,129,0.08);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
     body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: #090D16;
-      color: #E2E8F0;
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
     }
-    .gradient-glow {
-      background: radial-gradient(circle at 50% -20%, rgba(16, 185, 129, 0.15), transparent 70%);
+    ::selection { background: rgba(16,185,129,0.25); color: #a7f3d0; }
+
+    /* =========================================================
+       TOP SWITCHER BAR
+    ========================================================= */
+    .switcher-bar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      background: rgba(8,17,30,0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 20px;
     }
-    .gradient-amber-glow {
-      background: radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.15), transparent 70%);
+    .switcher-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
     }
-    .glass-card {
-      background: rgba(16, 21, 34, 0.75);
+    .switcher-label {
+      font-family: var(--font-head);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .switcher-label-dot {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+    .tab-group {
+      display: flex;
+      gap: 4px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 4px;
+    }
+    .tab-btn {
+      font-family: var(--font-head);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: transparent;
+      border: none;
+      border-radius: 10px;
+      padding: 7px 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .tab-btn:hover { color: var(--text-primary); background: var(--surface-alt); }
+    .tab-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      box-shadow: 0 2px 12px rgba(16,185,129,0.3);
+    }
+    .switcher-hint { font-size: 11px; color: var(--text-muted); }
+
+    /* Section visibility */
+    .page-section { display: none; }
+    .page-section.active { display: block; }
+
+    /* =========================================================
+       SHARED NAV
+    ========================================================= */
+    .site-nav {
+      position: sticky;
+      top: 51px;
+      z-index: 100;
+      background: rgba(8,17,30,0.85);
       backdrop-filter: blur(12px);
-      border: 1px solid #1C2538;
+      border-bottom: 1px solid var(--border);
     }
-    .tab-active {
-      background-color: #10B981 !important;
-      color: #FFFFFF !important;
-      font-weight: 700 !important;
-      box-shadow: 0 4px 14px 0 rgba(16, 185, 129, 0.35);
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .nav-logo-icon {
+      width: 36px; height: 36px;
+      border-radius: var(--radius-sm);
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .nav-logo-text {
+      font-family: var(--font-head);
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text-primary); }
+    .nav-links a:focus-visible { outline: 2px solid var(--accent); border-radius: 4px; }
+    .nav-cta-row { display: flex; gap: 10px; align-items: center; }
+
+    .btn-ghost {
+      font-family: var(--font-head);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      padding: 6px 8px;
+      border-radius: var(--radius-sm);
+      transition: color 0.2s;
+    }
+    .btn-ghost:hover { color: var(--text-primary); }
+    .btn-ghost:focus-visible { outline: 2px solid var(--accent); }
+
+    .btn-primary {
+      font-family: var(--font-head);
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      background: var(--accent);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      padding: 8px 18px;
+      border-radius: var(--radius-sm);
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 2px 12px rgba(16,185,129,0.25);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 4px 18px rgba(16,185,129,0.32); }
+    .btn-primary:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+    .btn-secondary {
+      font-family: var(--font-head);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      text-decoration: none;
+      padding: 8px 18px;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-secondary:hover { background: var(--surface-alt); color: var(--text-primary); border-color: var(--border-hover); }
+    .btn-secondary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .btn-large { font-size: 15px; padding: 13px 28px; border-radius: var(--radius-md); }
+
+    /* =========================================================
+       LAYOUT
+    ========================================================= */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    .spacer-top { height: 51px; }
+
+    .section-header { text-align: center; max-width: 560px; margin: 0 auto 56px; }
+    .section-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: var(--font-head);
+      font-size: clamp(22px, 3.5vw, 32px);
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.25;
+    }
+
+    /* =========================================================
+       OPSI 1: INTERACTIVE PRODUCT SHOWCASE
+    ========================================================= */
+    .o1-hero {
+      padding: 72px 24px 48px;
+      max-width: 1100px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .o1-hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-border);
+      border-radius: 100px;
+      padding: 5px 14px;
+      margin-bottom: 24px;
+    }
+    .o1-hero-title {
+      font-family: var(--font-head);
+      font-size: clamp(32px, 5vw, 58px);
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1.12;
+      max-width: 800px;
+      margin: 0 auto 20px;
+    }
+    .o1-hero-title em { font-style: normal; color: var(--accent); }
+    .o1-hero-sub { font-size: clamp(14px, 2vw, 17px); color: var(--text-secondary); max-width: 580px; margin: 0 auto 32px; }
+    .o1-cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 48px; }
+    .trust-pills { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+    .trust-pill { font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
+    .trust-pill svg { color: var(--accent); flex-shrink: 0; }
+
+    .simulator-wrap { max-width: 860px; margin: 0 auto; padding: 0 24px 80px; }
+    .simulator-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      box-shadow: var(--shadow-card), var(--shadow-glow);
+    }
+    .sim-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+    .sim-workspace-badge {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--accent);
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-border);
+      border-radius: 6px;
+      padding: 3px 8px;
+      margin-bottom: 6px;
+      display: inline-block;
+    }
+    .sim-goal-name { font-family: var(--font-head); font-size: 20px; font-weight: 700; color: var(--text-primary); }
+    .sim-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .sim-status-badge { font-size: 11px; font-weight: 600; padding: 5px 12px; border-radius: 100px; border: 1px solid; white-space: nowrap; }
+    .sim-status-active { color: var(--accent); background: var(--accent-dim); border-color: var(--accent-border); }
+    .sim-status-done { color: var(--amber); background: var(--amber-dim); border-color: var(--amber-border); }
+
+    .sim-amount-label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+    .sim-amount-row { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .sim-amount-current { font-family: var(--font-head); font-size: clamp(28px, 5vw, 40px); font-weight: 800; color: var(--text-primary); }
+    .sim-amount-target { font-size: 13px; color: var(--text-muted); }
+
+    .progress-track {
+      background: var(--bg-alt);
+      border-radius: 100px;
+      height: 14px;
+      border: 1px solid var(--border);
+      padding: 2px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 100px;
+      background: linear-gradient(90deg, #10b981, #34d399);
+      transition: width 0.4s cubic-bezier(0.34,1.56,0.64,1), background 0.3s;
+    }
+    .progress-fill.done { background: linear-gradient(90deg, #f59e0b, #10b981); }
+    .progress-labels { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 20px; }
+    .progress-percent { font-weight: 700; color: var(--accent); }
+    .progress-remaining { color: var(--text-muted); }
+
+    .milestone-banner {
+      display: none;
+      background: linear-gradient(135deg, var(--amber-dim), rgba(16,185,129,0.06));
+      border: 1px solid var(--amber-border);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+    }
+    .milestone-banner.visible { display: flex; align-items: center; gap: 14px; }
+    .milestone-icon {
+      width: 40px; height: 40px;
+      border-radius: var(--radius-sm);
+      background: var(--amber-dim);
+      border: 1px solid var(--amber-border);
+      color: var(--amber);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .milestone-title { font-family: var(--font-head); font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 2px; }
+    .milestone-sub { font-size: 12px; color: var(--text-secondary); }
+
+    .sim-controls-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+    .sim-btn-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px; }
+    @media (min-width: 480px) { .sim-btn-grid { grid-template-columns: repeat(4, 1fr); } }
+    .sim-btn {
+      font-family: var(--font-head);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 10px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .sim-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .sim-btn-deposit { background: var(--accent-dim); border-color: var(--accent-border); color: #4ade80; }
+    .sim-btn-deposit:hover { background: rgba(16,185,129,0.2); }
+    .sim-btn-withdraw { background: var(--rose-dim); border-color: var(--rose-border); color: #fb7185; }
+    .sim-btn-withdraw:hover { background: rgba(244,63,94,0.17); }
+    .sim-btn-reset { background: var(--surface-alt); border-color: var(--border); color: var(--text-secondary); }
+    .sim-btn-reset:hover { background: var(--border); color: var(--text-primary); }
+
+    /* Autoplay: countdown ring + press flash */
+    .sim-btn { position: relative; overflow: hidden; }
+    .sim-btn.auto-next { box-shadow: 0 0 0 2px var(--accent); z-index: 1; }
+    .sim-btn.auto-next::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: rgba(16,185,129,0.1);
+      animation: btn-countdown 2.2s linear forwards;
+    }
+    .sim-btn-withdraw.auto-next { box-shadow: 0 0 0 2px var(--rose); }
+    .sim-btn-withdraw.auto-next::after { background: rgba(244,63,94,0.1); }
+    @keyframes btn-countdown {
+      0%   { opacity: 1; clip-path: inset(0 100% 0 0); }
+      100% { opacity: 1; clip-path: inset(0 0% 0 0); }
+    }
+    .sim-btn.btn-press { animation: btn-flash 0.22s ease; }
+    @keyframes btn-flash {
+      0%   { transform: scale(1); }
+      40%  { transform: scale(0.93); }
+      100% { transform: scale(1); }
+    }
+
+    .autoplay-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; flex-wrap: wrap; margin-bottom: 16px;
+    }
+    .autoplay-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); }
+    .autoplay-status {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 600; color: var(--text-muted);
+      background: var(--surface-alt); border: 1px solid var(--border);
+      border-radius: 100px; padding: 4px 10px;
+    }
+    .autoplay-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--accent);
+      transition: background 0.3s;
+    }
+    .autoplay-dot.paused { background: var(--amber); }
+    .autoplay-status-text { transition: color 0.3s; }
+    .autoplay-status.is-paused .autoplay-dot { background: var(--amber); }
+    .autoplay-status.is-paused .autoplay-status-text { color: var(--amber); }
+    .sim-next-label {
+      font-size: 12px; color: var(--text-muted); min-height: 18px;
+      transition: opacity 0.3s;
+    }
+    .sim-next-label span { color: var(--text-secondary); font-weight: 600; }
+    .sim-note { font-size: 11px; color: var(--text-muted); }
+
+    .activity-feed { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 20px; }
+    .activity-feed-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 12px; }
+    .activity-list { display: flex; flex-direction: column; gap: 8px; }
+    .activity-item { display: flex; align-items: center; gap: 10px; font-size: 12px; animation: slide-in 0.3s ease; }
+    @keyframes slide-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+    .activity-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .activity-dot-deposit { background: var(--accent); }
+    .activity-dot-withdraw { background: var(--rose); }
+    .activity-text { color: var(--text-secondary); }
+    .activity-amount { font-weight: 600; }
+    .activity-amount-deposit { color: var(--accent); }
+    .activity-amount-withdraw { color: var(--rose); }
+    .activity-time { margin-left: auto; color: var(--text-muted); font-size: 11px; }
+
+    .o1-features { background: var(--bg-alt); border-top: 1px solid var(--border); padding: 80px 24px; }
+    .features-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media (min-width: 640px) { .features-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 900px) { .features-grid { grid-template-columns: repeat(3, 1fr); } }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .feature-card:hover { border-color: var(--border-hover); transform: translateY(-2px); box-shadow: var(--shadow-card); }
+    .feature-icon { width: 42px; height: 42px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+    .feature-icon-teal { background: var(--accent-dim); border: 1px solid var(--accent-border); color: var(--accent); }
+    .feature-icon-blue { background: var(--blue-dim); border: 1px solid rgba(96,165,250,0.25); color: var(--blue); }
+    .feature-icon-amber { background: var(--amber-dim); border: 1px solid var(--amber-border); color: var(--amber); }
+    .feature-title { font-family: var(--font-head); font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+    .feature-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
+
+    .o1-security { padding: 80px 24px; border-top: 1px solid var(--border); }
+    .security-layout { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 48px; align-items: center; }
+    @media (min-width: 768px) { .security-layout { grid-template-columns: 1fr 1fr; } }
+    .security-desc { font-size: 14px; color: var(--text-secondary); margin-top: 16px; line-height: 1.7; }
+    .security-points { display: flex; flex-direction: column; gap: 14px; margin-top: 24px; }
+    .security-point { display: flex; align-items: flex-start; gap: 10px; }
+    .security-point-icon { color: var(--accent); flex-shrink: 0; margin-top: 2px; }
+    .security-point-text { font-size: 13px; color: var(--text-secondary); }
+    .security-point-text strong { color: var(--text-primary); font-weight: 600; }
+    .flow-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; }
+    .flow-title { font-family: var(--font-head); font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 20px; }
+    .flow-step { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 16px; }
+    .flow-step:last-child { margin-bottom: 0; }
+    .flow-step-num { width: 28px; height: 28px; border-radius: 50%; background: var(--surface-alt); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--accent); flex-shrink: 0; }
+    .flow-step-text { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+    .flow-step-text strong { color: var(--text-primary); }
+    .flow-connector { width: 1px; height: 16px; background: var(--border); margin-left: 13px; }
+
+    /* =========================================================
+       OPSI 1: BEFORE/AFTER SHIFT SECTION
+    ========================================================= */
+    .o1-shift { padding: 80px 24px; border-top: 1px solid var(--border); background: var(--bg); }
+    .o1-shift-inner { max-width: 900px; margin: 0 auto; }
+    .o1-shift-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); text-align: center; margin-bottom: 14px; }
+    .o1-shift-heading { font-family: var(--font-head); font-size: clamp(22px, 3.5vw, 30px); font-weight: 800; color: var(--text-primary); text-align: center; line-height: 1.25; margin-bottom: 48px; }
+    .o1-shift-heading em { font-style: normal; color: var(--accent); }
+    .o1-shift-grid { display: grid; grid-template-columns: 1fr; gap: 2px; border-radius: var(--radius-xl); overflow: hidden; border: 1px solid var(--border); }
+    @media (min-width: 640px) { .o1-shift-grid { grid-template-columns: 1fr 1fr; } }
+    .o1-shift-col { padding: 28px 28px 32px; }
+    .o1-shift-col-before { background: rgba(20, 5, 9, 0.85); border-right: 1px solid var(--rose-border); }
+    .o1-shift-col-after  { background: rgba(4, 20, 15, 0.85); }
+    @media (max-width: 639px) { .o1-shift-col-before { border-right: none; border-bottom: 1px solid var(--rose-border); } }
+    .o1-shift-col-tag { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+    .o1-shift-col-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .o1-shift-col-before .o1-shift-col-dot { background: var(--rose); }
+    .o1-shift-col-after  .o1-shift-col-dot { background: var(--accent); }
+    .o1-shift-col-tagname { font-size: 12px; font-weight: 700; }
+    .o1-shift-col-before .o1-shift-col-tagname { color: var(--rose); }
+    .o1-shift-col-after  .o1-shift-col-tagname { color: var(--accent); }
+    .o1-shift-items { display: flex; flex-direction: column; gap: 12px; }
+    .o1-shift-item { display: flex; align-items: flex-start; gap: 10px; }
+    .o1-shift-item-icon { flex-shrink: 0; margin-top: 2px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; }
+    .o1-shift-col-before .o1-shift-item-icon svg { color: var(--rose); }
+    .o1-shift-col-after  .o1-shift-item-icon svg { color: var(--accent); }
+    .o1-shift-item-text { font-size: 13px; line-height: 1.6; color: var(--text-secondary); }
+    .o1-shift-item-text strong { font-weight: 600; color: var(--text-primary); }
+
+    /* =========================================================
+       OPSI 2: PROBLEM-SOLUTION NARRATIVE
+    ========================================================= */
+    .o2-hero { padding: 72px 24px 56px; max-width: 920px; margin: 0 auto; text-align: center; }
+    .o2-hero-label { display: inline-block; font-size: 12px; font-weight: 600; color: var(--amber); background: var(--amber-dim); border: 1px solid var(--amber-border); border-radius: 100px; padding: 5px 14px; margin-bottom: 28px; }
+    .o2-hero-title { font-family: var(--font-head); font-size: clamp(28px, 4.5vw, 52px); font-weight: 800; color: var(--text-primary); line-height: 1.15; margin-bottom: 20px; }
+    .o2-hero-sub { font-size: clamp(14px, 2vw, 16px); color: var(--text-secondary); max-width: 560px; margin: 0 auto 36px; }
+
+    .compare-section { padding: 0 24px 80px; }
+    .compare-grid { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media (min-width: 640px) { .compare-grid { grid-template-columns: 1fr 1fr; } }
+    .compare-card { border-radius: var(--radius-xl); padding: 28px; }
+    .compare-before { background: rgba(17, 5, 8, 0.7); border: 1px solid var(--rose-border); }
+    .compare-after { background: rgba(5, 22, 17, 0.7); border: 1px solid var(--accent-border); }
+    .compare-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+    .compare-icon { width: 36px; height: 36px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; flex-shrink: 0; }
+    .compare-icon-before { background: var(--rose-dim); border: 1px solid var(--rose-border); color: var(--rose); }
+    .compare-icon-after { background: var(--accent-dim); border: 1px solid var(--accent-border); color: var(--accent); }
+    .compare-card-title { font-family: var(--font-head); font-size: 16px; font-weight: 700; }
+    .compare-before .compare-card-title { color: #fb7185; }
+    .compare-after .compare-card-title { color: #4ade80; }
+    .compare-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+    .compare-item { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text-secondary); }
+    .compare-bullet { font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .compare-before .compare-bullet { color: var(--rose); }
+    .compare-after .compare-bullet { color: var(--accent); }
+
+    .o2-personas { background: var(--bg-alt); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 80px 24px; }
+    .persona-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media (min-width: 640px) { .persona-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 900px) { .persona-grid { grid-template-columns: repeat(3, 1fr); } }
+    .persona-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; transition: border-color 0.2s, box-shadow 0.2s; }
+    .persona-card:hover { border-color: var(--border-hover); box-shadow: var(--shadow-card); }
+    .persona-emoji { font-size: 32px; margin-bottom: 14px; display: block; }
+    .persona-name { font-family: var(--font-head); font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; }
+    .persona-role { font-size: 12px; color: var(--accent); margin-bottom: 10px; }
+    .persona-need { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
+
+    .o2-howit { padding: 80px 24px; }
+    .howit-layout { max-width: 780px; margin: 0 auto; }
+    .howit-step { display: flex; gap: 24px; position: relative; margin-bottom: 40px; }
+    .howit-step:last-child { margin-bottom: 0; }
+    .howit-step::after { content: ''; position: absolute; left: 19px; top: 48px; bottom: -40px; width: 2px; background: linear-gradient(to bottom, var(--border), transparent); }
+    .howit-step:last-child::after { display: none; }
+    .howit-num { width: 40px; height: 40px; border-radius: 50%; background: var(--surface); border: 2px solid var(--accent-border); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 14px; font-weight: 800; color: var(--accent); flex-shrink: 0; position: relative; z-index: 1; }
+    .howit-step-title { font-family: var(--font-head); font-size: 17px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; }
+    .howit-step-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+    .howit-tag { display: inline-block; margin-top: 8px; font-size: 11px; font-weight: 600; color: var(--text-muted); background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px; }
+
+    /* =========================================================
+       OPSI 3: FEATURE ARCHITECTURE GRID
+    ========================================================= */
+    .o3-hero { padding: 72px 24px 56px; max-width: 1100px; margin: 0 auto; }
+    .o3-hero-inner { display: grid; grid-template-columns: 1fr; gap: 32px; align-items: center; }
+    @media (min-width: 768px) { .o3-hero-inner { grid-template-columns: 1.1fr 0.9fr; } }
+    .o3-hero-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 5px 10px; margin-bottom: 20px; }
+    .o3-hero-tag span { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: inline-block; }
+    .o3-hero-title { font-family: var(--font-head); font-size: clamp(30px, 4.5vw, 52px); font-weight: 800; color: var(--text-primary); line-height: 1.1; margin-bottom: 20px; }
+    .o3-hero-title span { color: var(--accent); }
+    .o3-hero-sub { font-size: 14px; color: var(--text-secondary); line-height: 1.7; max-width: 460px; margin-bottom: 28px; }
+    .o3-cta-row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .o3-stats-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; }
+    .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .stat-item { text-align: center; }
+    .stat-num { font-family: var(--font-head); font-size: 28px; font-weight: 800; color: var(--text-primary); line-height: 1; margin-bottom: 4px; }
+    .stat-num span { color: var(--accent); }
+    .stat-label { font-size: 11px; color: var(--text-muted); }
+    .stat-divider { width: 100%; height: 1px; background: var(--border); margin: 16px 0; }
+    .mini-goal-card { background: var(--bg-alt); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; margin-top: 16px; }
+    .mini-goal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .mini-goal-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+    .mini-goal-pct { font-size: 12px; font-weight: 700; color: var(--accent); }
+    .mini-progress-track { background: var(--bg); border-radius: 100px; height: 6px; overflow: hidden; }
+    .mini-progress-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, #10b981, #34d399); }
+
+    .arch-section { padding: 0 24px 80px; }
+    .arch-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 14px; }
+    @media (min-width: 640px) { .arch-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 900px) { .arch-grid { grid-template-columns: repeat(3, 1fr); } }
+    .arch-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; transition: border-color 0.2s, transform 0.2s; }
+    .arch-card:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+    .arch-card-wide { grid-column: 1; }
+    @media (min-width: 640px) { .arch-card-wide { grid-column: span 2; } }
+    @media (min-width: 900px) { .arch-card-wide-3 { grid-column: span 3; } }
+    .arch-card-num { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 12px; font-family: monospace; }
+    .arch-card-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .arch-card-label-green { color: var(--accent); }
+    .arch-card-label-blue { color: var(--blue); }
+    .arch-card-label-amber { color: var(--amber); }
+    .arch-card-label-muted { color: var(--text-muted); }
+    .arch-card-title { font-family: var(--font-head); font-size: 18px; font-weight: 700; color: var(--text-primary); margin-bottom: 10px; line-height: 1.3; }
+    .arch-card-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.65; }
+    .arch-tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+    .arch-tag { font-size: 11px; color: var(--text-secondary); background: var(--surface-alt); border: 1px solid var(--border); border-radius: 6px; padding: 3px 9px; }
+    .arch-highlight { background: linear-gradient(135deg, var(--surface), rgba(16,185,129,0.05)); border-color: var(--accent-border); }
+    .arch-highlight:hover { border-color: var(--accent); }
+
+    .o3-roadmap { background: var(--bg-alt); border-top: 1px solid var(--border); padding: 80px 24px; }
+    .roadmap-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 16px; }
+    @media (min-width: 600px) { .roadmap-grid { grid-template-columns: repeat(3, 1fr); } }
+    .roadmap-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px; }
+    .roadmap-version { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px; }
+    .roadmap-v1 { color: var(--accent); }
+    .roadmap-v2 { color: var(--blue); }
+    .roadmap-v3 { color: var(--amber); }
+    .roadmap-name { font-family: var(--font-head); font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 14px; }
+    .roadmap-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .roadmap-item { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: var(--text-secondary); }
+    .roadmap-item-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+    .roadmap-v1-dot { background: var(--accent); }
+    .roadmap-v2-dot { background: var(--blue); }
+    .roadmap-v3-dot { background: var(--amber); }
+
+    /* =========================================================
+       SHARED FOOTER
+    ========================================================= */
+    .cta-block { padding: 80px 24px; border-top: 1px solid var(--border); text-align: center; }
+    .cta-block-inner { max-width: 540px; margin: 0 auto; }
+    .cta-title { font-family: var(--font-head); font-size: clamp(24px, 4vw, 38px); font-weight: 800; color: var(--text-primary); margin-bottom: 14px; }
+    .cta-sub { font-size: 14px; color: var(--text-secondary); margin-bottom: 28px; }
+    .cta-btn-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    .site-footer { background: var(--bg-alt); border-top: 1px solid var(--border); padding: 28px 24px; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+    .footer-brand { font-family: var(--font-head); font-size: 14px; font-weight: 700; color: var(--text-primary); }
+    .footer-copy { font-size: 12px; color: var(--text-muted); }
+
+    /* =========================================================
+       RESPONSIVE
+    ========================================================= */
+    @media (max-width: 639px) {
+      .nav-links { display: none; }
+      .switcher-hint { display: none; }
+      .tab-btn { padding: 6px 9px; font-size: 10px; }
+    }
+    @media (max-width: 400px) { .tab-btn { padding: 5px 7px; font-size: 9px; } }
   </style>
 </head>
-<body class="min-h-screen bg-[#090D16] text-slate-100 selection:bg-emerald-500/30 selection:text-emerald-300">
+<body>
 
-  <!-- ======================================================================= -->
-  <!-- FLOATING CONCEPT SWITCHER (TOP BAR) -->
-  <!-- ======================================================================= -->
-  <div class="fixed top-0 left-0 right-0 z-50 bg-[#0B0F19]/90 backdrop-blur-md border-b border-[#1C2538] px-4 py-2.5 shadow-xl shadow-black/40">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-2.5">
-      <div class="flex items-center gap-2">
-        <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
-        </div>
-        <span class="text-xs font-bold uppercase tracking-wider text-slate-300">Konsep Landing Page Nabungin:</span>
+  <!-- TOP SWITCHER -->
+  <div class="switcher-bar" role="navigation" aria-label="Pilih konsep landing page">
+    <div class="switcher-inner">
+      <div class="switcher-label">
+        <span class="switcher-label-dot"></span>
+        Konsep Nabungin
       </div>
-
-      <!-- Segmented Buttons -->
-      <div class="flex items-center gap-1.5 p-1 rounded-xl bg-[#141A28] border border-[#222D44]">
-        <button id="btn-opt-1" onclick="switchOption(1)" class="tab-active px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 transition-all duration-200 hover:text-white">
-          Opsi 1: Interactive Product Showcase
-        </button>
-        <button id="btn-opt-2" onclick="switchOption(2)" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 transition-all duration-200 hover:text-white">
-          Opsi 2: Problem-Solution & Cerita Nyata
-        </button>
-        <button id="btn-opt-3" onclick="switchOption(3)" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 transition-all duration-200 hover:text-white">
-          Opsi 3: High-Impact Modern Bento Grid
-        </button>
+      <div class="tab-group" role="tablist">
+        <button id="tab1" class="tab-btn active" role="tab" aria-selected="true" aria-controls="page1" onclick="showPage(1)">Opsi 1: Demo Interaktif</button>
+        <button id="tab2" class="tab-btn" role="tab" aria-selected="false" aria-controls="page2" onclick="showPage(2)">Opsi 2: Cerita Nyata</button>
+        <button id="tab3" class="tab-btn" role="tab" aria-selected="false" aria-controls="page3" onclick="showPage(3)">Opsi 3: Arsitektur Fitur</button>
       </div>
-
-      <div class="hidden lg:flex items-center gap-2 text-[11px] text-slate-400">
-        <span class="inline-block h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span>Pilih opsi untuk melihat pratinjau</span>
-      </div>
+      <span class="switcher-hint">Pilih opsi untuk pratinjau</span>
     </div>
   </div>
 
-  <!-- Spacer for top switcher -->
-  <div class="h-16"></div>
+  <div class="spacer-top"></div>
 
-  <!-- ======================================================================= -->
-  <!-- ======================== OPSI 1: PRODUCT SHOWCASE ===================== -->
-  <!-- ======================================================================= -->
-  <section id="option-1" class="transition-opacity duration-300">
-    <!-- Navbar Opsi 1 -->
-    <header class="border-b border-[#1C2538] bg-[#090D16]/80 backdrop-blur-md sticky top-16 z-30">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        <div class="flex items-center gap-2.5">
-          <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 shadow-md shadow-emerald-500/10">
-            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+  <!-- ============================================================
+       OPSI 1: INTERACTIVE PRODUCT SHOWCASE
+       Strategi: Langsung tunjukkan produk bekerja nyata
+  ============================================================ -->
+  <div id="page1" class="page-section active" role="tabpanel" aria-labelledby="tab1">
+    <nav class="site-nav" aria-label="Navigasi utama">
+      <div class="nav-inner">
+        <a href="#" class="nav-logo" aria-label="Nabungin beranda">
+          <div class="nav-logo-icon">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
           </div>
-          <span class="text-xl font-bold tracking-tight text-white">Nabungin</span>
-          <span class="text-[10px] font-semibold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full ml-1">V1.0 Live</span>
-        </div>
-
-        <nav class="hidden md:flex items-center gap-6 text-sm text-slate-300">
-          <a href="#fitur-1" class="hover:text-emerald-400 transition-colors">Fitur Unggulan</a>
-          <a href="#simulator-1" class="hover:text-emerald-400 transition-colors">Simulasi Live</a>
-          <a href="#keamanan-1" class="hover:text-emerald-400 transition-colors">Privasi Akun</a>
-        </nav>
-
-        <div class="flex items-center gap-3">
-          <a href="/login" class="px-3.5 py-1.5 text-xs sm:text-sm font-medium text-slate-300 hover:text-white transition-colors">Masuk</a>
-          <a href="/register" class="px-4 py-2 text-xs sm:text-sm font-semibold rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/20 transition-all hover:scale-[1.02]">Daftar Gratis</a>
+          <span class="nav-logo-text">Nabungin</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="#sim1">Coba Demo</a></li>
+          <li><a href="#fitur1">Fitur</a></li>
+          <li><a href="#shift1">Sebelum &amp; Sesudah</a></li>
+          <li><a href="#alur1">Cara Kerja</a></li>
+        </ul>
+        <div class="nav-cta-row">
+          <a href="/login" class="btn-ghost">Masuk</a>
+          <a href="/register" class="btn-primary">Daftar Gratis</a>
         </div>
       </div>
-    </header>
+    </nav>
 
-    <!-- Hero Opsi 1 -->
-    <div class="relative overflow-hidden pt-12 pb-20 gradient-glow">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center space-y-6">
-        <div class="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-1.5 text-xs font-semibold text-emerald-300">
-          <svg class="h-3.5 w-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-          <span>Privasi Bebas Khawatir: Cukup Username, Tanpa Perlu Email Pribadi</span>
-        </div>
-
-        <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight text-white max-w-4xl mx-auto leading-tight sm:leading-none">
-          Wujudkan Target Finansial, <br />
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">Sendiri Maupun Bersama</span>
-        </h1>
-
-        <p class="max-w-2xl mx-auto text-base sm:text-lg text-slate-400 leading-relaxed">
-          Ruang tabungan digital untuk impian bersama. Buat target finansial terpisah, catat alokasi setoran dan penarikan secara transparan, serta pantau progres tanpa takut saldo tercampur.
-        </p>
-
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-          <a href="/register" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-xl shadow-emerald-600/30 transition-all hover:scale-[1.02] flex items-center justify-center gap-2">
-            <span>Mulai Menabung Sekarang</span>
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-          </a>
-          <a href="#simulator-1" class="w-full sm:w-auto px-6 py-3.5 rounded-xl border border-slate-700 bg-slate-900/60 hover:bg-slate-800 text-slate-300 font-semibold text-sm transition-colors flex items-center justify-center gap-2">
-            <span>Coba Simulasi Interaktif</span>
-          </a>
-        </div>
-
-        <!-- Trust Badges -->
-        <div class="flex flex-wrap items-center justify-center gap-6 pt-4 text-xs text-slate-400">
-          <div class="flex items-center gap-1.5"><svg class="h-4 w-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Personal & Shared Workspace</div>
-          <div class="flex items-center gap-1.5"><svg class="h-4 w-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Proteksi Anti-Overdraft (Saldo Anti-Minus)</div>
-          <div class="flex items-center gap-1.5"><svg class="h-4 w-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>Ekspor Laporan Excel & CSV</div>
-        </div>
+    <header class="o1-hero">
+      <div class="o1-hero-eyebrow">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        Gratis seumur hidup, tanpa biaya langganan
       </div>
-    </div>
-
-    <!-- Live Interactive Mockup Simulator (Option 1 Signature) -->
-    <div id="simulator-1" class="max-w-4xl mx-auto px-4 sm:px-6 -mt-8 pb-20">
-      <div class="rounded-3xl border border-[#1C2538] bg-[#0E1320] p-6 sm:p-8 shadow-2xl relative overflow-hidden">
-        <!-- Banner Milestone Dinamis -->
-        <div id="demo-banner" class="hidden rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-transparent p-4 sm:p-5 mb-6 relative overflow-hidden transition-all">
-          <div class="flex items-center gap-3.5">
-            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/40">
-              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
-            </div>
-            <div>
-              <span class="text-[11px] font-bold uppercase tracking-wider text-amber-400">Milestone Tercapai! 🎉</span>
-              <h4 class="text-sm sm:text-base font-bold text-white">Target Telah Terkumpul Penuh!</h4>
-              <p class="text-xs text-slate-300">Dana telah mencapai 100%. Anda dapat melakukan penarikan untuk realisasi target kapan saja.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Header Mockup -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#1C2538] pb-5">
-          <div class="flex items-center gap-3">
-            <div class="h-10 w-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
-              🏖️
-            </div>
-            <div>
-              <div class="flex items-center gap-2">
-                <span class="text-xs uppercase tracking-wider font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">Shared Workspace</span>
-                <span class="text-xs text-slate-400">4 Anggota</span>
-              </div>
-              <h3 class="text-lg sm:text-xl font-bold text-white mt-0.5">Liburan Akhir Tahun di Bali</h3>
-            </div>
-          </div>
-
-          <div class="flex items-center gap-2">
-            <span id="demo-badge" class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-              Status: Aktif
-            </span>
-          </div>
-        </div>
-
-        <!-- Body Mockup -->
-        <div class="py-6 space-y-4">
-          <div class="flex items-baseline justify-between">
-            <span class="text-xs text-slate-400">Saldo Terkumpul Saat Ini:</span>
-            <div class="text-right">
-              <span id="demo-current" class="text-2xl sm:text-3xl font-extrabold text-white">Rp 4.000.000</span>
-              <span class="text-xs text-slate-400 ml-1.5">dari <span id="demo-target">Rp 5.000.000</span></span>
-            </div>
-          </div>
-
-          <!-- Progress Bar Real-time -->
-          <div class="w-full bg-[#1A2234] rounded-full h-3.5 overflow-hidden p-0.5 border border-[#243048]">
-            <div id="demo-bar" class="bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-300" style="width: 80%;"></div>
-          </div>
-
-          <div class="flex items-center justify-between text-xs text-slate-400">
-            <span id="demo-percent" class="font-bold text-emerald-400">80% tercapai</span>
-            <span id="demo-remaining">Rp 1.000.000 lagi</span>
-          </div>
-        </div>
-
-        <!-- Interactive Control Bar -->
-        <div class="bg-[#121828] border border-[#1E273C] rounded-2xl p-4 sm:p-5">
-          <div class="text-xs font-semibold text-slate-300 mb-3 flex items-center justify-between">
-            <span>🎮 Uji Coba Interaksi Transaksi Langsung:</span>
-            <span class="text-[11px] text-slate-400">Coba tekan tombol di bawah</span>
-          </div>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-            <button onclick="demoDeposit(500000)" class="px-3 py-2 rounded-xl bg-emerald-600/20 border border-emerald-500/30 hover:bg-emerald-600/30 text-emerald-300 text-xs font-semibold transition-all">
-              + Setor Rp 500k
-            </button>
-            <button onclick="demoDeposit(1000000)" class="px-3 py-2 rounded-xl bg-emerald-600/20 border border-emerald-500/30 hover:bg-emerald-600/30 text-emerald-300 text-xs font-semibold transition-all">
-              + Setor Rp 1 Juta (Lunas)
-            </button>
-            <button onclick="demoWithdraw(500000)" class="px-3 py-2 rounded-xl bg-rose-500/20 border border-rose-500/30 hover:bg-rose-500/30 text-rose-300 text-xs font-semibold transition-all">
-              - Tarik Rp 500k
-            </button>
-            <button onclick="demoReset()" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-all">
-              ↺ Reset Demo
-            </button>
-          </div>
-          <p id="demo-note" class="text-[11px] text-slate-400 mt-2.5">
-            💡 Sistem otomatis menyesuaikan status: ketika ditarik di bawah target, status lunas dan banner selamat langsung hilang secara dinamis!
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- 3 Pilar Fitur (Opsi 1) -->
-    <div id="fitur-1" class="border-t border-[#1C2538] py-20 bg-[#0C101A]">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6">
-        <div class="text-center max-w-2xl mx-auto mb-14 space-y-2">
-          <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Dirancang untuk Kejujuran & Transparansi</span>
-          <h2 class="text-2xl sm:text-3xl font-bold text-white">Semua Fitur yang Anda Butuhkan untuk Menabung Bersama</h2>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="rounded-2xl border border-[#1C2538] bg-[#101522] p-6 space-y-4 hover:border-emerald-500/30 transition-all">
-            <div class="h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center">
-              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-            </div>
-            <h3 class="text-lg font-bold text-white">Workspace Pribadi & Bersama</h3>
-            <p class="text-xs text-slate-400 leading-relaxed">
-              Pisahkan antara tabungan pribadi harian Anda dengan tabungan proyek kelompok. Cukup undang partner dengan 1 link invite tanpa perlu mendaftar ulang.
-            </p>
-          </div>
-
-          <div class="rounded-2xl border border-[#1C2538] bg-[#101522] p-6 space-y-4 hover:border-emerald-500/30 transition-all">
-            <div class="h-10 w-10 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center">
-              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
-            </div>
-            <h3 class="text-lg font-bold text-white">Pos Alokasi Transaksi Jelas</h3>
-            <p class="text-xs text-slate-400 leading-relaxed">
-              Tiap mutasi dana dicatat dengan pos yang transparan: Alokasi Bulanan, Bonus & THR, hingga pos penarikan seperti Pencairan Target dan Biaya Medis Darurat.
-            </p>
-          </div>
-
-          <div class="rounded-2xl border border-[#1C2538] bg-[#101522] p-6 space-y-4 hover:border-emerald-500/30 transition-all">
-            <div class="h-10 w-10 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center">
-              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-            </div>
-            <h3 class="text-lg font-bold text-white">Proyeksi Target & Laporan</h3>
-            <p class="text-xs text-slate-400 leading-relaxed">
-              Ketahui estimasi kapan target tabungan tercapai berdasarkan rata-rata tabungan bulanan. Riwayat transaksi dapat diekspor ke format Excel dan CSV kapan saja.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ======================================================================= -->
-  <!-- ======================== OPSI 2: PROBLEM-SOLUTION ===================== -->
-  <!-- ======================================================================= -->
-  <section id="option-2" class="hidden transition-opacity duration-300">
-    <!-- Navbar Opsi 2 -->
-    <header class="border-b border-[#1C2538] bg-[#090D16]/90 backdrop-blur-md sticky top-16 z-30">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <span class="text-xl font-extrabold text-white">Nabungin</span>
-          <span class="text-xs text-slate-400 border-l border-slate-700 pl-2">Tabungan Bersama Tanpa Ribet</span>
-        </div>
-        <div class="flex items-center gap-3">
-          <a href="/login" class="text-xs sm:text-sm font-semibold text-slate-300 hover:text-white">Masuk</a>
-          <a href="/register" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs sm:text-sm font-bold text-white transition-all">Buat Akun Bebas Email</a>
-        </div>
-      </div>
-    </header>
-
-    <!-- Hero Opsi 2 (Problem Hook) -->
-    <div class="pt-16 pb-16 gradient-amber-glow">
-      <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center space-y-6">
-        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20 inline-block">
-          Sering Patungan Tapi Catatan Berantakan?
-        </span>
-        <h1 class="text-3xl sm:text-5xl font-extrabold text-white leading-tight">
-          Hentikan Kebiasaan Patungan di Spreadsheet & Grup WhatsApp yang Bikin Bingung
-        </h1>
-        <p class="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
-          Uang tercampur di satu rekening pribadi, lupa mencatat transferan, atau bukti transfer hilang tertimpa chat. Nabungin hadir menyelesaikan masalah tersebut dengan ruang tabungan terpisah.
-        </p>
-        <div class="pt-2">
-          <a href="/register" class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-xl shadow-emerald-600/30 transition-all">
-            <span>Coba Nabungin Gratis Sekarang</span>
-            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Before vs After Comparison Grid (Signature Opsi 2) -->
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 pb-20">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Cara Lama (Merah) -->
-        <div class="rounded-3xl border border-rose-500/30 bg-[#140E14]/80 p-6 sm:p-8 space-y-5">
-          <div class="flex items-center gap-3">
-            <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-500/20 text-rose-400 border border-rose-500/30 font-bold">
-              ✕
-            </div>
-            <h3 class="text-lg font-bold text-rose-300">Cara Lama yang Melelahkan</h3>
-          </div>
-          <ul class="space-y-3.5 text-xs sm:text-sm text-slate-300">
-            <li class="flex items-start gap-2.5">
-              <span class="text-rose-400 font-bold">✕</span>
-              <span>Uang patungan dititipkan di satu rekening pribadi teman dan rawan terpakai secara tidak sengaja.</span>
-            </li>
-            <li class="flex items-start gap-2.5">
-              <span class="text-rose-400 font-bold">✕</span>
-              <span>Bukti transfer manual di-screenshot ke grup chat dan tenggelam oleh ratusan obrolan lain.</span>
-            </li>
-            <li class="flex items-start gap-2.5">
-              <span class="text-rose-400 font-bold">✕</span>
-              <span>Spreadsheet manual sering keliru rumus atau tidak pernah diperbarui tepat waktu.</span>
-            </li>
-            <li class="flex items-start gap-2.5">
-              <span class="text-rose-400 font-bold">✕</span>
-              <span>Takut mendaftar aplikasi karena dipaksa memasukkan email pribadi dan data sensitif.</span>
-            </li>
-          </ul>
-        </div>
-
-        <!-- Cara Nabungin (Hijau Emerald) -->
-        <div class="rounded-3xl border border-emerald-500/30 bg-[#0E1A17]/80 p-6 sm:p-8 space-y-5">
-          <div class="flex items-center gap-3">
-            <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold">
-              ✓
-            </div>
-            <h3 class="text-lg font-bold text-emerald-300">Dengan Nabungin</h3>
-          </div>
-          <ul class="space-y-3.5 text-xs sm:text-sm text-slate-200">
-            <li class="flex items-start gap-2.5">
-              <span class="text-emerald-400 font-bold">✓</span>
-              <span>Ruang khusus (Workspace) per target impian. Saldo transparan dan bisa dicek bersama tiap saat.</span>
-            </li>
-            <li class="flex items-start gap-2.5">
-              <span class="text-emerald-400 font-bold">✓</span>
-              <span>Setiap penarikan tercatat pos alokasinya dengan jelas, serta dilindungi anti-minus database.</span>
-            </li>
-            <li class="flex items-start gap-2.5">
-              <span class="text-emerald-400 font-bold">✓</span>
-              <span>Progress bar dinamis dan notifikasi otomatis begitu target 100% tercapai penuh.</span>
-            </li>
-            <li class="flex items-start gap-2.5">
-              <span class="text-emerald-400 font-bold">✓</span>
-              <span>Privasi aman: Pengguna cukup mendaftar dengan Username & Password, tanpa email pribadi.</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <!-- 3 Kasus Nyata (Opsi 2) -->
-    <div class="border-t border-[#1C2538] py-16 bg-[#0B0F19]">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6">
-        <div class="text-center max-w-xl mx-auto mb-12">
-          <h2 class="text-2xl sm:text-3xl font-bold text-white">Cocok untuk Berbagai Kebutuhan</h2>
-          <p class="text-xs text-slate-400 mt-2">Didesain fleksibel untuk individu maupun kelompok.</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div class="rounded-2xl border border-[#1C2538] bg-[#101522] p-5 space-y-3">
-            <div class="text-2xl">💍</div>
-            <h4 class="font-bold text-white text-base">Pasangan Muda</h4>
-            <p class="text-xs text-slate-400 leading-relaxed">Nabung bersama untuk biaya resepsi, seserahan, atau DP rumah dengan satu dashboard transparan bagi kedua belah pihak.</p>
-          </div>
-          <div class="rounded-2xl border border-[#1C2538] bg-[#101522] p-5 space-y-3">
-            <div class="text-2xl">✈️</div>
-            <h4 class="font-bold text-white text-base">Circle Teman & Keluarga</h4>
-            <p class="text-xs text-slate-400 leading-relaxed">Kumpulkan dana liburan tahunan, arisan keluarga, atau sewa villa bersama tanpa ada rasa canggung menanyakan sisa saldo.</p>
-          </div>
-          <div class="rounded-2xl border border-[#1C2538] bg-[#101522] p-5 space-y-3">
-            <div class="text-2xl">🛡️</div>
-            <h4 class="font-bold text-white text-base">Pribadi & Dana Darurat</h4>
-            <p class="text-xs text-slate-400 leading-relaxed">Disiplinkan diri menyisihkan tabungan untuk gadget idaman, servis kendaraan, hingga dana darurat 3-6 bulan pengeluaran.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ======================================================================= -->
-  <!-- ======================== OPSI 3: MODERN BENTO GRID ==================== -->
-  <!-- ======================================================================= -->
-  <section id="option-3" class="hidden transition-opacity duration-300">
-    <!-- Navbar Opsi 3 -->
-    <header class="border-b border-[#1C2538] bg-[#090D16]/95 backdrop-blur-md sticky top-16 z-30">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <div class="h-8 w-8 rounded-lg bg-emerald-500 flex items-center justify-center text-slate-950 font-extrabold text-sm">
-            N
-          </div>
-          <span class="text-lg font-extrabold text-white tracking-tight">nabungin.</span>
-        </div>
-        <div class="flex items-center gap-3">
-          <a href="/login" class="text-xs font-semibold text-slate-300 hover:text-white px-3 py-1.5">Masuk</a>
-          <a href="/register" class="text-xs font-bold bg-white hover:bg-slate-200 text-slate-950 px-4 py-2 rounded-lg transition-all">Mulai Sekarang</a>
-        </div>
-      </div>
-    </header>
-
-    <!-- Hero Opsi 3 -->
-    <div class="pt-16 pb-12">
-      <div class="max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-4">
-        <div class="inline-flex items-center gap-2 rounded-md bg-slate-800/80 border border-slate-700 px-3 py-1 text-xs text-slate-300">
-          <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
-          <span>Satu Tempat untuk Semua Target Tabunganmu</span>
-        </div>
-        <h1 class="text-4xl sm:text-6xl font-black text-white tracking-tight">
-          Arsitektur Tabungan Cerdas. <br />
-          <span class="text-slate-400 font-bold">Tanpa Kerumitan.</span>
-        </h1>
-        <p class="text-sm sm:text-base text-slate-400 max-w-xl mx-auto">
-          Eksplorasi ringkasan komprehensif ekosistem Nabungin dalam visual Bento Box berikut:
-        </p>
-      </div>
-    </div>
-
-    <!-- Bento Grid Container (Signature Opsi 3) -->
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 pb-24">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-        
-        <!-- Bento 1 (Large 2 Cols): Workspace Management -->
-        <div class="md:col-span-2 rounded-3xl border border-[#1C2538] bg-[#101522] p-7 space-y-4 relative overflow-hidden group hover:border-[#2A3650] transition-all">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Multi-Workspace Architecture</span>
-            <span class="text-xs text-slate-500 font-mono">01 // Ruang Kerja</span>
-          </div>
-          <h3 class="text-2xl font-bold text-white">Bebas Buat Ruang Personal Maupun Shared Workspace</h3>
-          <p class="text-xs sm:text-sm text-slate-400 max-w-lg leading-relaxed">
-            Punya tabungan pribadi yang rahasia? Simpan di Personal Workspace. Ingin patungan trip bareng rekan? Buat Shared Workspace baru dan undang mereka dalam hitungan detik.
-          </p>
-          <div class="pt-2 flex flex-wrap gap-2">
-            <span class="px-3 py-1 rounded-lg bg-[#182032] border border-[#222D44] text-xs text-slate-300">🔒 Personal Workspace (Default)</span>
-            <span class="px-3 py-1 rounded-lg bg-[#182032] border border-[#222D44] text-xs text-slate-300">👥 Shared Workspace (Kolaboratif)</span>
-            <span class="px-3 py-1 rounded-lg bg-[#182032] border border-[#222D44] text-xs text-slate-300">🔗 Link Undangan Instan</span>
-          </div>
-        </div>
-
-        <!-- Bento 2: 100% Privacy & No Email Required -->
-        <div class="rounded-3xl border border-emerald-500/20 bg-gradient-to-b from-[#101E1D] to-[#0E151E] p-7 space-y-4 relative overflow-hidden hover:border-emerald-500/40 transition-all">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Privacy First</span>
-            <span class="text-xs text-slate-500 font-mono">02 // Akun</span>
-          </div>
-          <div class="h-10 w-10 rounded-xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center">
-            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-          </div>
-          <h3 class="text-xl font-bold text-white">Daftar Murni Pakai Username</h3>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            Tidak perlu takut email pribadi bocor atau kena spam. Anda cukup menentukan username dan password, akun langsung aktif seketika.
-          </p>
-        </div>
-
-        <!-- Bento 3: Pos Alokasi & Kategori -->
-        <div class="rounded-3xl border border-[#1C2538] bg-[#101522] p-7 space-y-4 hover:border-[#2A3650] transition-all">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold uppercase tracking-wider text-blue-400">Ledger Finansial</span>
-            <span class="text-xs text-slate-500 font-mono">03 // Kategori</span>
-          </div>
-          <h3 class="text-xl font-bold text-white">Pos Alokasi Masuk & Keluar</h3>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            Semua transaksi memiliki label: Alokasi Bulanan, Bonus & THR, Sisa Belanja, hingga pos penarikan seperti Pencairan Target & Biaya Medis.
-          </p>
-        </div>
-
-        <!-- Bento 4: Proteksi Anti-Overdraft -->
-        <div class="rounded-3xl border border-[#1C2538] bg-[#101522] p-7 space-y-4 hover:border-[#2A3650] transition-all">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Proteksi Keuangan</span>
-            <span class="text-xs text-slate-500 font-mono">04 // Keamanan</span>
-          </div>
-          <h3 class="text-xl font-bold text-white">Saldo Anti-Minus (Overdraft Guard)</h3>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            Database trigger PostgreSQL menjaga integritas tabungan. Dana tidak dapat ditarik melebihi sisa tabungan yang tersedia di target.
-          </p>
-        </div>
-
-        <!-- Bento 5: Milestone Dinamis -->
-        <div class="rounded-3xl border border-[#1C2538] bg-[#101522] p-7 space-y-4 hover:border-[#2A3650] transition-all">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-bold uppercase tracking-wider text-teal-400">Smart Trigger</span>
-            <span class="text-xs text-slate-500 font-mono">05 // Milestone</span>
-          </div>
-          <h3 class="text-xl font-bold text-white">Status Lunas Dinamis</h3>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            Jika target mencapai 100%, sistem merayakannya. Namun jika saldo diambil, status kembali aktif secara otomatis tanpa bug status tertinggal.
-          </p>
-        </div>
-
-        <!-- Bento 6 (Large 3 Cols): Laporan & Ekspor -->
-        <div class="md:col-span-3 rounded-3xl border border-[#1C2538] bg-gradient-to-r from-[#101522] via-[#12192A] to-[#101522] p-7 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 hover:border-[#2A3650] transition-all">
-          <div class="space-y-2">
-            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Arsip & Rekonsiliasi</span>
-            <h3 class="text-2xl font-bold text-white">Unduh Laporan Transaksi ke Excel & CSV</h3>
-            <p class="text-xs sm:text-sm text-slate-400 max-w-2xl leading-relaxed">
-              Ingin mengecek pembukuan akhir tahun? Seluruh riwayat mutasi dari masing-masing ruang tabungan dapat diekspor langsung dalam format spreadsheet resmi.
-            </p>
-          </div>
-          <div class="shrink-0 flex items-center gap-3">
-            <a href="/register" class="px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm shadow-lg shadow-emerald-600/20 transition-all">
-              Buka Ruang Tabunganmu
-            </a>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-
-  <!-- ======================================================================= -->
-  <!-- FOOTER BERSAMA -->
-  <!-- ======================================================================= -->
-  <footer class="border-t border-[#1C2538] bg-[#070A11] py-8 text-center text-xs text-slate-400">
-    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-2">
-        <span class="font-bold text-white">Nabungin</span>
-        <span>— Platform Tabungan Personal & Kolaboratif</span>
-      </div>
-      <p class="text-slate-400">
-        © 2026 Nabungin. Hak Cipta Dilindungi. Dibuat untuk transparansi finansial nyata.
+      <h1 class="o1-hero-title">
+        Wujudkan Target Finansial,<br>
+        <em>Sendiri Maupun Bersama</em>
+      </h1>
+      <p class="o1-hero-sub">
+        Nabungin memisahkan pos tabungan Anda per target impian. Dana tidak lagi tercampur, progres terlihat jelas, dan saldo selalu sinkron otomatis dari database.
       </p>
+      <div class="o1-cta-row">
+        <a href="/register" class="btn-primary btn-large">
+          Mulai Menabung Sekarang
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </a>
+        <a href="#sim1" class="btn-secondary btn-large">Coba Simulator Langsung</a>
+      </div>
+      <div class="trust-pills">
+        <span class="trust-pill"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Personal dan Shared Workspace</span>
+        <span class="trust-pill"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Saldo dihitung otomatis oleh database</span>
+        <span class="trust-pill"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Proteksi anti-minus built-in</span>
+        <span class="trust-pill"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>Ekspor CSV kapan saja</span>
+      </div>
+    </header>
+
+    <!-- Interactive Simulator -->
+    <div id="sim1" class="simulator-wrap">
+      <div class="simulator-card">
+        <div id="milestone-banner" class="milestone-banner" role="alert" aria-live="polite">
+          <div class="milestone-icon">
+            <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+          </div>
+          <div>
+            <div class="milestone-title">Target Tercapai! 100% Terkumpul</div>
+            <div class="milestone-sub">Notifikasi otomatis dikirim ke seluruh anggota grup. Dana siap dicairkan kapan saja.</div>
+          </div>
+        </div>
+
+        <div class="sim-header">
+          <div>
+            <div class="sim-workspace-badge">Shared Workspace &middot; 4 Anggota</div>
+            <div class="sim-goal-name">&#127958; Liburan Akhir Tahun di Bali</div>
+            <div class="sim-meta">Deadline: 31 Desember 2026</div>
+          </div>
+          <span id="sim-status" class="sim-status-badge sim-status-active">Status: Aktif</span>
+        </div>
+
+        <div class="sim-amount-label">Saldo terkumpul saat ini</div>
+        <div class="sim-amount-row">
+          <span id="sim-current" class="sim-amount-current">Rp&nbsp;4.000.000</span>
+          <span class="sim-amount-target">dari Rp&nbsp;5.000.000</span>
+        </div>
+        <div class="progress-track" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" aria-label="Progres tabungan">
+          <div id="sim-bar" class="progress-fill" style="width:80%"></div>
+        </div>
+        <div class="progress-labels">
+          <span id="sim-pct" class="progress-percent">80% tercapai</span>
+          <span id="sim-rem" class="progress-remaining">Rp&nbsp;1.000.000 lagi</span>
+        </div>
+
+        <div class="autoplay-bar">
+          <div>
+            <div class="autoplay-label">Demo Langsung</div>
+            <div id="sim-next-label" class="sim-next-label">Memuat skenario...</div>
+          </div>
+          <div id="autoplay-status" class="autoplay-status" aria-live="polite">
+            <span class="autoplay-dot" id="autoplay-dot"></span>
+            <span class="autoplay-status-text" id="autoplay-status-text">Berjalan otomatis</span>
+          </div>
+        </div>
+        <div class="sim-btn-grid">
+          <button id="sbtn-d500" class="sim-btn sim-btn-deposit" onclick="manualSimDeposit(500000)" aria-label="Setor Rp 500.000">+ Setor Rp 500rb</button>
+          <button id="sbtn-d1000" class="sim-btn sim-btn-deposit" onclick="manualSimDeposit(1000000)" aria-label="Setor Rp 1.000.000">+ Setor Rp 1 Juta</button>
+          <button id="sbtn-w500" class="sim-btn sim-btn-withdraw" onclick="manualSimWithdraw(500000)" aria-label="Tarik Rp 500.000">&#8722; Tarik Rp 500rb</button>
+          <button id="sbtn-reset" class="sim-btn sim-btn-reset" onclick="manualSimReset()" aria-label="Reset demo ke awal">Ulang Demo</button>
+        </div>
+        <p id="sim-note" class="sim-note">Klik tombol kapan saja untuk berinteraksi langsung. Demo akan melanjutkan otomatis.</p>
+
+        <div class="activity-feed" aria-label="Riwayat aktivitas demo">
+          <div class="activity-feed-title">Riwayat Aktivitas</div>
+          <div id="activity-list" class="activity-list">
+            <div class="activity-item"><span class="activity-dot activity-dot-deposit"></span><span class="activity-text">Rian menyetor <span class="activity-amount activity-amount-deposit">Rp&nbsp;1.000.000</span></span><span class="activity-time">14 Sep</span></div>
+            <div class="activity-item"><span class="activity-dot activity-dot-deposit"></span><span class="activity-text">Sarah menyetor <span class="activity-amount activity-amount-deposit">Rp&nbsp;1.500.000</span></span><span class="activity-time">12 Sep</span></div>
+            <div class="activity-item"><span class="activity-dot activity-dot-deposit"></span><span class="activity-text">Budi menyetor <span class="activity-amount activity-amount-deposit">Rp&nbsp;1.500.000</span></span><span class="activity-time">10 Sep</span></div>
+          </div>
+        </div>
+      </div>
     </div>
-  </footer>
 
-  <!-- ======================================================================= -->
-  <!-- JAVASCRIPT: CONTROLLER & SIMULATOR LOGIC -->
-  <!-- ======================================================================= -->
+    <!-- Features -->
+    <section id="fitur1" class="o1-features">
+      <div class="section-header">
+        <div class="section-eyebrow">Dibangun untuk transparansi nyata</div>
+        <h2 class="section-title">Semua yang dibutuhkan untuk menabung bersama</h2>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon feature-icon-teal"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
+          <h3 class="feature-title">Multi-Workspace</h3>
+          <p class="feature-desc">Satu akun untuk tabungan pribadi sekaligus beberapa grup kolaboratif. Pisahkan pos "Dana Darurat" dari "Liburan Bali" tanpa perlu ganti akun.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon feature-icon-teal"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg></div>
+          <h3 class="feature-title">Target Finansial dengan Deadline</h3>
+          <p class="feature-desc">Buat goal dengan nama, nominal target, dan tanggal tenggat. Progress bar otomatis menghitung persentase berdasarkan saldo riil dari database, bukan input manual.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon feature-icon-blue"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg></div>
+          <h3 class="feature-title">Pos Kategori Transaksi</h3>
+          <p class="feature-desc">Setiap setoran dan penarikan diberi label pos: Alokasi Bulanan, Bonus dan THR, Sisa Belanja, atau kategori custom yang Anda buat sendiri per workspace.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon feature-icon-blue"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg></div>
+          <h3 class="feature-title">Notifikasi Realtime</h3>
+          <p class="feature-desc">Saat anggota lain menyetor atau goal mencapai 100%, lonceng notifikasi di navbar menyala secara langsung tanpa me-refresh halaman berkat Supabase Realtime.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon feature-icon-amber"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div>
+          <h3 class="feature-title">Proteksi Anti-Minus</h3>
+          <p class="feature-desc">Trigger PostgreSQL menjaga agar saldo tidak pernah negatif. Penarikan melebihi saldo tersedia langsung ditolak di level database, bukan hanya validasi UI.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon feature-icon-amber"><svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
+          <h3 class="feature-title">Ekspor Laporan CSV</h3>
+          <p class="feature-desc">Unduh seluruh riwayat mutasi per workspace dalam format CSV atau Excel. Cocok untuk rekonsiliasi akhir bulan atau pembukuan bersama kelompok.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Before / After Shift -->
+    <section id="shift1" class="o1-shift" aria-label="Sebelum dan sesudah menggunakan Nabungin">
+      <div class="o1-shift-inner">
+        <div class="o1-shift-label">Perubahan nyata</div>
+        <h2 class="o1-shift-heading">Dari cara lama yang rawan, ke catatan yang <em>transparan dan akurat</em></h2>
+        <div class="o1-shift-grid">
+
+          <div class="o1-shift-col o1-shift-col-before">
+            <div class="o1-shift-col-tag">
+              <span class="o1-shift-col-dot" aria-hidden="true"></span>
+              <span class="o1-shift-col-tagname">Sebelum Nabungin</span>
+            </div>
+            <div class="o1-shift-items">
+              <div class="o1-shift-item">
+                <span class="o1-shift-item-icon" aria-hidden="true"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></span>
+                <span class="o1-shift-item-text"><strong>Dana tabungan tercampur</strong> dengan uang belanja harian di satu rekening.</span>
+              </div>
+              <div class="o1-shift-item">
+                <span class="o1-shift-item-icon" aria-hidden="true"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></span>
+                <span class="o1-shift-item-text"><strong>Tidak ada catatan siapa setor berapa</strong>. Konfirmasi lewat screenshot di grup chat yang cepat tenggelam.</span>
+              </div>
+              <div class="o1-shift-item">
+                <span class="o1-shift-item-icon" aria-hidden="true"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></span>
+                <span class="o1-shift-item-text"><strong>Progress target tidak terlihat jelas</strong> karena saldo dihitung manual atau dikira-kira.</span>
+              </div>
+              <div class="o1-shift-item">
+                <span class="o1-shift-item-icon" aria-hidden="true"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></span>
+                <span class="o1-shift-item-text"><strong>Penarikan berlebih tidak terdeteksi</strong> sampai saldo sudah habis dan target gagal.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="o1-shift-col o1-shift-col-after">
+            <div class="o1-shift-col-tag">
+              <span class="o1-shift-col-dot" aria-hidden="true"></span>
+              <span class="o1-shift-col-tagname">Dengan Nabungin</span>
+            </div>
+            <div class="o1-shift-items">
+              <div class="o1-shift-item">
+                <span class="o1-shift-item-icon" aria-hidden="true"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span>
+                <span class="o1-shift-item-text"><strong>Setiap tujuan punya pos sendiri</strong>. Dana Darurat, Liburan, DP Rumah, semuanya terpisah dan tidak bisa terpakai tidak sengaja.</span>
+              </div>
+              <div class="o1-shift-item">
+                <span class="o1-shift-item-icon" aria-hidden="true"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span>
+                <span class="o1-shift-item-text"><strong>Setiap setoran tercatat siapa, kapan, dan berapa</strong>. Anggota bisa lihat riwayat lengkap kapan saja.</span>
+              </div>
+              <div class="o1-shift-item">
+                <span class="o1-shift-item-icon" aria-hidden="true"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span>
+                <span class="o1-shift-item-text"><strong>Progress bar dihitung langsung dari database</strong>, bukan input manual, sehingga persentase selalu akurat.</span>
+              </div>
+              <div class="o1-shift-item">
+                <span class="o1-shift-item-icon" aria-hidden="true"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></span>
+                <span class="o1-shift-item-text"><strong>Trigger database menolak penarikan melebihi saldo</strong>. Saldo tidak bisa minus, target tetap aman.</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Security / How it works -->
+    <section id="alur1" class="o1-security">
+      <div class="security-layout">
+        <div>
+          <div class="section-eyebrow" style="text-align:left;">Integritas Data</div>
+          <h2 class="section-title" style="text-align:left;">Saldo dihitung database, bukan klien</h2>
+          <p class="security-desc">Tidak seperti spreadsheet, Nabungin menghitung saldo langsung dari jumlah transaksi di PostgreSQL. Tidak ada celah manipulasi manual dari sisi UI.</p>
+          <div class="security-points">
+            <div class="security-point">
+              <svg class="security-point-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span class="security-point-text"><strong>Row Level Security</strong> di Supabase: data antar workspace tidak bisa bocor satu sama lain.</span>
+            </div>
+            <div class="security-point">
+              <svg class="security-point-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span class="security-point-text"><strong>Trigger otomatis</strong>: setiap mutasi langsung menyinkronkan saldo goal tanpa input manual.</span>
+            </div>
+            <div class="security-point">
+              <svg class="security-point-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span class="security-point-text"><strong>Invite token berbatas waktu</strong>: link undangan punya tenggat dan kuota, tidak bisa disalahgunakan.</span>
+            </div>
+            <div class="security-point">
+              <svg class="security-point-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span class="security-point-text"><strong>Pencapaian tersimpan permanen</strong>: setelah goal lunas, status achieved tidak hilang meski ada penarikan berikutnya.</span>
+            </div>
+          </div>
+        </div>
+        <div class="flow-card">
+          <div class="flow-title">Alur Transaksi</div>
+          <div class="flow-step">
+            <div class="flow-step-num">1</div>
+            <div class="flow-step-text"><strong>Isi form transaksi</strong> dengan nominal, goal, dan kategori, lalu simpan.</div>
+          </div>
+          <div class="flow-connector"></div>
+          <div class="flow-step">
+            <div class="flow-step-num">2</div>
+            <div class="flow-step-text"><strong>Server Action Next.js</strong> memvalidasi data dengan Zod sebelum masuk ke database.</div>
+          </div>
+          <div class="flow-connector"></div>
+          <div class="flow-step">
+            <div class="flow-step-num">3</div>
+            <div class="flow-step-text"><strong>Trigger PostgreSQL</strong> otomatis menghitung ulang saldo goal dari SUM semua transaksi.</div>
+          </div>
+          <div class="flow-connector"></div>
+          <div class="flow-step">
+            <div class="flow-step-num">4</div>
+            <div class="flow-step-text"><strong>Jika target tercapai</strong>, notifikasi dikirim ke seluruh anggota workspace via Supabase Realtime.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="cta-block">
+      <div class="cta-block-inner">
+        <h2 class="cta-title">Mulai hari ini, gratis selamanya</h2>
+        <p class="cta-sub">Tidak perlu kartu kredit. Buat akun dan workspace pertama Anda langsung terbentuk otomatis.</p>
+        <div class="cta-btn-row">
+          <a href="/register" class="btn-primary btn-large">Buat Akun Gratis</a>
+          <a href="/login" class="btn-secondary btn-large">Sudah punya akun</a>
+        </div>
+      </div>
+    </div>
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <span class="footer-brand">Nabungin</span>
+        <span class="footer-copy">Platform tabungan personal dan kolaboratif. Gratis selamanya.</span>
+        <span class="footer-copy">&copy; 2026</span>
+      </div>
+    </footer>
+  </div>
+
+
+  <!-- ============================================================
+       OPSI 2: PROBLEM-SOLUTION NARRATIVE
+       Strategi: Berbicara langsung ke rasa frustrasi pengguna
+  ============================================================ -->
+  <div id="page2" class="page-section" role="tabpanel" aria-labelledby="tab2">
+    <nav class="site-nav" aria-label="Navigasi utama">
+      <div class="nav-inner">
+        <a href="#" class="nav-logo" aria-label="Nabungin beranda">
+          <div class="nav-logo-icon"><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg></div>
+          <span class="nav-logo-text">Nabungin</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="#compare2">Masalah vs Solusi</a></li>
+          <li><a href="#persona2">Siapa Penggunanya</a></li>
+          <li><a href="#howit2">Cara Kerja</a></li>
+        </ul>
+        <div class="nav-cta-row">
+          <a href="/login" class="btn-ghost">Masuk</a>
+          <a href="/register" class="btn-primary">Coba Gratis</a>
+        </div>
+      </div>
+    </nav>
+
+    <header class="o2-hero">
+      <span class="o2-hero-label">Punya pengalaman seperti ini?</span>
+      <h1 class="o2-hero-title">Patungan lewat transfer ke rekening teman, lalu bingung siapa sudah bayar berapa</h1>
+      <p class="o2-hero-sub">Nabungin hadir sebagai ruang tabungan digital terpisah per tujuan. Transparan, tercatat rapi, bisa diakses bersama tanpa perlu aplikasi perbankan baru.</p>
+      <a href="/register" class="btn-primary btn-large">
+        Coba Nabungin Gratis
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+      </a>
+    </header>
+
+    <section id="compare2" class="compare-section">
+      <div class="compare-grid">
+        <div class="compare-card compare-before">
+          <div class="compare-card-header">
+            <div class="compare-icon compare-icon-before">&#10005;</div>
+            <h2 class="compare-card-title">Cara lama yang melelahkan</h2>
+          </div>
+          <ul class="compare-list">
+            <li class="compare-item"><span class="compare-bullet">&#10005;</span><span>Uang patungan dititip di rekening satu orang dan rawan terpakai tanpa disadari.</span></li>
+            <li class="compare-item"><span class="compare-bullet">&#10005;</span><span>Bukti transfer di-screenshot ke grup chat, lalu tenggelam tertimpa ratusan pesan.</span></li>
+            <li class="compare-item"><span class="compare-bullet">&#10005;</span><span>Spreadsheet manual sering salah rumus atau tidak diperbarui tepat waktu.</span></li>
+            <li class="compare-item"><span class="compare-bullet">&#10005;</span><span>Tidak ada notifikasi otomatis ketika teman sudah menyetor atau target tercapai.</span></li>
+            <li class="compare-item"><span class="compare-bullet">&#10005;</span><span>Canggung harus menagih satu per satu tanpa data netral yang bisa ditunjukkan.</span></li>
+          </ul>
+        </div>
+        <div class="compare-card compare-after">
+          <div class="compare-card-header">
+            <div class="compare-icon compare-icon-after">&#10003;</div>
+            <h2 class="compare-card-title">Dengan Nabungin</h2>
+          </div>
+          <ul class="compare-list">
+            <li class="compare-item"><span class="compare-bullet">&#10003;</span><span>Ruang tabungan terpisah per tujuan. Saldo dihitung otomatis dan bisa dilihat bersama kapan saja.</span></li>
+            <li class="compare-item"><span class="compare-bullet">&#10003;</span><span>Setiap setoran masuk ke activity log dengan nama kontributor, nominal, dan waktu yang tepat.</span></li>
+            <li class="compare-item"><span class="compare-bullet">&#10003;</span><span>Progress bar otomatis memperbarui diri berdasarkan data riil. Tidak ada angka yang bisa dimanipulasi.</span></li>
+            <li class="compare-item"><span class="compare-bullet">&#10003;</span><span>Notifikasi realtime muncul di navbar saat ada transaksi baru atau target 100% tercapai.</span></li>
+            <li class="compare-item"><span class="compare-bullet">&#10003;</span><span>Cukup bagikan link invite. Siapa sudah setor berapa terlihat jelas tanpa perlu tanya satu per satu.</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="persona2" class="o2-personas">
+      <div class="section-header">
+        <h2 class="section-title">Siapa yang menggunakan Nabungin?</h2>
+      </div>
+      <div class="persona-grid">
+        <div class="persona-card">
+          <span class="persona-emoji">&#128141;</span>
+          <h3 class="persona-name">Pasangan Muda</h3>
+          <div class="persona-role">Tabungan DP Rumah dan Biaya Pernikahan</div>
+          <p class="persona-need">Nabung bersama untuk biaya resepsi, seserahan, atau DP rumah pertama. Keduanya bisa memantau saldo dan menyetor kapan saja lewat HP masing-masing.</p>
+        </div>
+        <div class="persona-card">
+          <span class="persona-emoji">&#9992;&#65039;</span>
+          <h3 class="persona-name">Circle Teman dan Keluarga</h3>
+          <div class="persona-role">Dana Liburan, Arisan, Sewa Tempat</div>
+          <p class="persona-need">Kumpulkan dana trip akhir tahun, arisan keluarga besar, atau sewa villa bareng. Siapa sudah bayar berapa terlihat transparan tanpa perlu ada yang merasa canggung.</p>
+        </div>
+        <div class="persona-card">
+          <span class="persona-emoji">&#127919;</span>
+          <h3 class="persona-name">Individual Disiplin</h3>
+          <div class="persona-role">Dana Darurat, Gadget, Kendaraan</div>
+          <p class="persona-need">Pisahkan pos tabungan dana darurat dari tabungan beli laptop baru atau servis kendaraan. Tidak ada lagi uang tabungan yang habis karena semuanya berpos jelas.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="howit2" class="o2-howit">
+      <div class="howit-layout">
+        <div class="section-header" style="text-align:left; max-width:none; margin-bottom:40px;">
+          <div class="section-eyebrow">Mudah dimulai</div>
+          <h2 class="section-title">Dari daftar hingga menabung bersama dalam 5 menit</h2>
+        </div>
+        <div class="howit-step">
+          <div class="howit-num">1</div>
+          <div>
+            <h3 class="howit-step-title">Daftar akun tanpa email pribadi</h3>
+            <p class="howit-step-desc">Cukup pilih username dan password. Akun langsung aktif dan workspace tabungan pribadi pertama Anda sudah siap digunakan secara instan.</p>
+            <span class="howit-tag">Tidak perlu verifikasi email</span>
+          </div>
+        </div>
+        <div class="howit-step">
+          <div class="howit-num">2</div>
+          <div>
+            <h3 class="howit-step-title">Buat target tabungan</h3>
+            <p class="howit-step-desc">Tentukan nama goal, nominal target, dan tenggat waktunya. Progress bar langsung tampil menunggu setoran pertama. Bisa buat banyak goal sekaligus.</p>
+            <span class="howit-tag">Ikon dan warna dapat dikustomisasi</span>
+          </div>
+        </div>
+        <div class="howit-step">
+          <div class="howit-num">3</div>
+          <div>
+            <h3 class="howit-step-title">Undang anggota dengan satu link</h3>
+            <p class="howit-step-desc">Buat link invite dengan tenggat dan kuota penggunaan, lalu bagikan ke teman atau pasangan. Mereka langsung masuk ke workspace setelah klik.</p>
+            <span class="howit-tag">Link kadaluarsa otomatis sesuai tenggat</span>
+          </div>
+        </div>
+        <div class="howit-step">
+          <div class="howit-num">4</div>
+          <div>
+            <h3 class="howit-step-title">Catat setiap setoran dan penarikan</h3>
+            <p class="howit-step-desc">Pilih goal, masukkan nominal, pilih kategori pos, dan simpan. Saldo goal otomatis diperbarui seketika. Histori transaksi dapat diekspor ke CSV.</p>
+            <span class="howit-tag">Semua perubahan realtime untuk seluruh anggota</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="cta-block">
+      <div class="cta-block-inner">
+        <h2 class="cta-title">Siap menabung tanpa khawatir?</h2>
+        <p class="cta-sub">Nabungin gratis sepenuhnya. Tidak ada biaya tersembunyi, tidak ada langganan bulanan.</p>
+        <div class="cta-btn-row"><a href="/register" class="btn-primary btn-large">Mulai Gratis Sekarang</a></div>
+      </div>
+    </div>
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <span class="footer-brand">Nabungin</span>
+        <span class="footer-copy">Platform tabungan personal dan kolaboratif. Gratis selamanya.</span>
+        <span class="footer-copy">&copy; 2026</span>
+      </div>
+    </footer>
+  </div>
+
+
+  <!-- ============================================================
+       OPSI 3: FEATURE ARCHITECTURE GRID
+       Strategi: Gambaran sistem lengkap, cocok untuk yang teknis
+  ============================================================ -->
+  <div id="page3" class="page-section" role="tabpanel" aria-labelledby="tab3">
+    <nav class="site-nav" aria-label="Navigasi utama">
+      <div class="nav-inner">
+        <a href="#" class="nav-logo" aria-label="Nabungin beranda">
+          <div class="nav-logo-icon" style="background:#10b981; border-color:#10b981; color:#001f12;"><span style="font-family:var(--font-head); font-weight:900; font-size:15px;">N</span></div>
+          <span class="nav-logo-text">nabungin.</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="#arch3">Ekosistem Fitur</a></li>
+          <li><a href="#roadmap3">Roadmap</a></li>
+        </ul>
+        <div class="nav-cta-row">
+          <a href="/login" class="btn-ghost">Masuk</a>
+          <a href="/register" class="btn-primary">Mulai Sekarang</a>
+        </div>
+      </div>
+    </nav>
+
+    <header class="o3-hero">
+      <div class="o3-hero-inner">
+        <div>
+          <div class="o3-hero-tag"><span></span>Tabungan terstruktur, bukan tumpukan angka</div>
+          <h1 class="o3-hero-title">Arsitektur tabungan yang<br><span>menjaga integritas</span> data Anda</h1>
+          <p class="o3-hero-sub">Nabungin bukan sekadar catatan keuangan. Ini sistem ledger berbasis PostgreSQL dengan role-based access, realtime sync, dan proteksi anti-overdraft yang bekerja di level database.</p>
+          <div class="o3-cta-row">
+            <a href="/register" class="btn-primary btn-large">Buat Workspace Pertama</a>
+            <a href="#arch3" class="btn-secondary btn-large">Lihat Seluruh Fitur</a>
+          </div>
+        </div>
+        <div class="o3-stats-card">
+          <div class="stats-row">
+            <div class="stat-item"><div class="stat-num">V1<span>+</span></div><div class="stat-label">Core sudah live</div></div>
+            <div class="stat-item"><div class="stat-num"><span>0</span>&nbsp;Rp</div><div class="stat-label">Biaya operasional</div></div>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stats-row">
+            <div class="stat-item"><div class="stat-num"><span>&#8734;</span></div><div class="stat-label">Workspace per akun</div></div>
+            <div class="stat-item"><div class="stat-num"><span>&#8635;</span></div><div class="stat-label">Saldo auto-sync</div></div>
+          </div>
+          <div class="mini-goal-card">
+            <div class="mini-goal-header"><span class="mini-goal-name">&#127958; Liburan Bali</span><span class="mini-goal-pct">80%</span></div>
+            <div class="mini-progress-track"><div class="mini-progress-fill" style="width:80%"></div></div>
+          </div>
+          <div class="mini-goal-card" style="margin-top:8px;">
+            <div class="mini-goal-header"><span class="mini-goal-name">&#128737; Dana Darurat</span><span class="mini-goal-pct">45%</span></div>
+            <div class="mini-progress-track"><div class="mini-progress-fill" style="width:45%"></div></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section id="arch3" class="arch-section">
+      <div class="section-header">
+        <div class="section-eyebrow">Ekosistem fitur</div>
+        <h2 class="section-title">Semua komponen dalam satu platform</h2>
+      </div>
+      <div class="arch-grid">
+        <div class="arch-card arch-card-wide arch-highlight">
+          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+            <span class="arch-card-label arch-card-label-green">Workspace Management</span>
+            <span class="arch-card-num">01</span>
+          </div>
+          <h3 class="arch-card-title">Personal dan Shared Workspace dalam satu akun</h3>
+          <p class="arch-card-desc">Setiap pengguna mendapat Personal Workspace otomatis saat mendaftar. Buat Shared Workspace baru kapan saja untuk proyek tabungan bersama, lalu undang anggota lewat link token berbatas waktu dan kuota.</p>
+          <div class="arch-tag-row">
+            <span class="arch-tag">Personal Workspace (default)</span>
+            <span class="arch-tag">Shared Workspace</span>
+            <span class="arch-tag">Invite Token berbatas waktu</span>
+            <span class="arch-tag">Role: Owner / Member</span>
+          </div>
+        </div>
+
+        <div class="arch-card">
+          <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span class="arch-card-label arch-card-label-green">Target Finansial</span><span class="arch-card-num">02</span></div>
+          <h3 class="arch-card-title">Goal dengan Progress Bar Dinamis</h3>
+          <p class="arch-card-desc">Buat target dengan nama, nominal, tenggat, ikon, dan warna. Progress bar dihitung dari SUM transaksi riil. Status otomatis berubah ke "achieved" ketika saldo menyentuh target.</p>
+          <div class="arch-tag-row"><span class="arch-tag">active / achieved / cancelled</span><span class="arch-tag">Deadline tracking</span></div>
+        </div>
+
+        <div class="arch-card">
+          <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span class="arch-card-label arch-card-label-blue">Ledger Mutasi</span><span class="arch-card-num">03</span></div>
+          <h3 class="arch-card-title">Deposit dan Penarikan Terklasifikasi</h3>
+          <p class="arch-card-desc">Setiap transaksi wajib terhubung ke satu Goal dan satu Kategori. Catatan tanggal dan notes bisa ditambahkan. Pemilik transaksi atau owner grup bisa mengedit atau menghapus.</p>
+          <div class="arch-tag-row"><span class="arch-tag">Deposit / Withdrawal</span><span class="arch-tag">Kategori custom</span><span class="arch-tag">Filter tanggal</span></div>
+        </div>
+
+        <div class="arch-card">
+          <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span class="arch-card-label arch-card-label-amber">Integritas Database</span><span class="arch-card-num">04</span></div>
+          <h3 class="arch-card-title">Saldo Auto-Kalkulasi via Trigger</h3>
+          <p class="arch-card-desc">Trigger PostgreSQL menghitung ulang saldo goal setiap kali ada INSERT, UPDATE, atau DELETE transaksi. Tidak ada saldo yang bisa diubah langsung dari sisi klien.</p>
+          <div class="arch-tag-row"><span class="arch-tag">Anti-minus (BR-009)</span><span class="arch-tag">Milestone persistence</span></div>
+        </div>
+
+        <div class="arch-card">
+          <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span class="arch-card-label arch-card-label-blue">Realtime</span><span class="arch-card-num">05</span></div>
+          <h3 class="arch-card-title">Notifikasi Lonceng Tanpa Refresh</h3>
+          <p class="arch-card-desc">Supabase Realtime WebSocket mengirim event ke semua anggota workspace saat ada transaksi baru atau goal tercapai. Badge lonceng bertambah secara instan.</p>
+          <div class="arch-tag-row"><span class="arch-tag">Supabase Realtime</span><span class="arch-tag">In-app bell badge</span></div>
+        </div>
+
+        <div class="arch-card">
+          <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span class="arch-card-label arch-card-label-muted">Audit Trail</span><span class="arch-card-num">06</span></div>
+          <h3 class="arch-card-title">Activity Log Transparan</h3>
+          <p class="arch-card-desc">Setiap aksi di workspace dicatat di activity_logs: siapa, apa, kapan. Feed timeline bisa diakses seluruh anggota. Histori tetap ada meski akun pembuat dihapus.</p>
+          <div class="arch-tag-row"><span class="arch-tag">Ledger audit</span><span class="arch-tag">Soft delete user</span></div>
+        </div>
+
+        <div class="arch-card arch-card-wide arch-card-wide-3" style="display:flex; flex-direction:column; gap:16px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+            <div>
+              <span class="arch-card-label arch-card-label-green">Laporan dan Ekspor</span>
+              <h3 class="arch-card-title" style="margin-bottom:6px;">Unduh Riwayat Transaksi ke CSV atau Excel</h3>
+              <p class="arch-card-desc" style="max-width:600px;">Seluruh mutasi per workspace dapat diekspor dalam format spreadsheet standar. Cocok untuk rekonsiliasi akhir bulan, laporan bersama, atau arsip keuangan pribadi.</p>
+            </div>
+            <a href="/register" class="btn-primary" style="white-space:nowrap;">Buka Workspace Anda</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="roadmap3" class="o3-roadmap">
+      <div class="section-header">
+        <div class="section-eyebrow">Peta Pengembangan</div>
+        <h2 class="section-title">Apa yang sudah ada dan yang akan datang</h2>
+      </div>
+      <div class="roadmap-grid">
+        <div class="roadmap-card">
+          <div class="roadmap-version roadmap-v1">V1 &mdash; Core (Sudah Live)</div>
+          <div class="roadmap-name">Fondasi Tabungan</div>
+          <ul class="roadmap-list">
+            <li class="roadmap-item"><span class="roadmap-item-dot roadmap-v1-dot"></span>Auth username dan password</li>
+            <li class="roadmap-item"><span class="roadmap-item-dot roadmap-v1-dot"></span>Personal dan Shared Workspace</li>
+            <li class="roadmap-item"><span class="roadmap-item-dot roadmap-v1-dot"></span>Goal dengan progress bar</li>
+            <li class="roadmap-item"><span class="roadmap-item-dot roadmap-v1-dot"></span>Transaksi deposit dan penarikan</li>
+            <li class="roadmap-item"><span class="roadmap-item-dot roadmap-v1-dot"></span>Saldo auto-kalkulasi via trigger</li>
+            <li class="roadmap-item"><span class="roadmap-item-dot roadmap-v1-dot"></span>Proteksi RLS seluruh tabel</li>
+          </ul>
+        </div>
+        <div class="roadmap-card">
+          <div class="roadmap-version roadmap-v2">V2 &mdash; Kolaborasi (Segera)</div>
+          <div class="roadmap-name">Transparansi Bersama</div>
+          <ul class="roadmap-list">
+            <li class="roadmap-item"><span class="roadmap-item-dot roadmap-v2-dot"></span>Invite token berbatas waktu</li>
+            <li class="roadmap-item"><span class="roadmap-item-dot roadmap-v2-dot"></span>Role Owner dan Member</li>
+            <li class="roadmap-item"><span class="roadmap-item-dot roadmap-v2-dot"></span>Activity log feed realtime</li>
+            <li class="roadmap-item"><span class="roadmap-item-dot roadmap-v2-dot"></span>Notifikasi lonceng in-app</li>
+            <li class="roadmap-item"><span class="roadmap-item-dot roadmap-v2-dot"></span>Filter transaksi per kategori</li>
+            <li class="roadmap-item"><span class="roadmap-item-dot roadmap-v2-dot"></span>Rincian kontribusi per anggota</li>
+          </ul>
+        </div>
+        <div class="roadmap-card">
+          <div class="roadmap-version roadmap-v3">V3 &mdash; Intelligence (Direncanakan)</div>
+          <div class="roadmap-name">Proyeksi Cerdas</div>
+          <ul class="roadmap-list">
+            <li class="roadmap-item"><span class="roadmap-item-dot roadmap-v3-dot"></span>Proyeksi waktu tercapai target</li>
+            <li class="roadmap-item"><span class="roadmap-item-dot roadmap-v3-dot"></span>Rekomendasi nominal bulanan</li>
+            <li class="roadmap-item"><span class="roadmap-item-dot roadmap-v3-dot"></span>Grafik tren pertumbuhan</li>
+            <li class="roadmap-item"><span class="roadmap-item-dot roadmap-v3-dot"></span>Celebrasi animasi konfeti</li>
+            <li class="roadmap-item"><span class="roadmap-item-dot roadmap-v3-dot"></span>Ekspor CSV dan Excel</li>
+            <li class="roadmap-item"><span class="roadmap-item-dot roadmap-v3-dot"></span>PWA untuk install di HP</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="cta-block">
+      <div class="cta-block-inner">
+        <h2 class="cta-title">Coba sistemnya langsung</h2>
+        <p class="cta-sub">Daftar sekarang dan workspace pertama Anda terbentuk otomatis dalam hitungan detik.</p>
+        <div class="cta-btn-row">
+          <a href="/register" class="btn-primary btn-large">Buat Akun Gratis</a>
+          <a href="/login" class="btn-secondary btn-large">Sudah punya akun</a>
+        </div>
+      </div>
+    </div>
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <span class="footer-brand">nabungin.</span>
+        <span class="footer-copy">Stack: Next.js 15, Supabase, PostgreSQL, TypeScript</span>
+        <span class="footer-copy">&copy; 2026</span>
+      </div>
+    </footer>
+  </div>
+
+
   <script>
-    // 1. Controller Switch Opsi 1, 2, 3
-    function switchOption(optNumber) {
-      const opt1 = document.getElementById('option-1');
-      const opt2 = document.getElementById('option-2');
-      const opt3 = document.getElementById('option-3');
-      const btn1 = document.getElementById('btn-opt-1');
-      const btn2 = document.getElementById('btn-opt-2');
-      const btn3 = document.getElementById('btn-opt-3');
-
-      // Hide all
-      opt1.classList.add('hidden');
-      opt2.classList.add('hidden');
-      opt3.classList.add('hidden');
-
-      // Reset button active styles
-      [btn1, btn2, btn3].forEach(b => b.classList.remove('tab-active'));
-
-      // Show selected
-      if (optNumber === 1) {
-        opt1.classList.remove('hidden');
-        btn1.classList.add('tab-active');
-        window.location.hash = '#opsi-1';
-      } else if (optNumber === 2) {
-        opt2.classList.remove('hidden');
-        btn2.classList.add('tab-active');
-        window.location.hash = '#opsi-2';
-      } else if (optNumber === 3) {
-        opt3.classList.remove('hidden');
-        btn3.classList.add('tab-active');
-        window.location.hash = '#opsi-3';
-      }
-
+    // Tab switcher
+    function showPage(num) {
+      var pages = ['page1','page2','page3'];
+      var tabs  = ['tab1','tab2','tab3'];
+      pages.forEach(function(id, i) {
+        var el  = document.getElementById(id);
+        var tab = document.getElementById(tabs[i]);
+        if (i + 1 === num) {
+          el.classList.add('active');
+          tab.classList.add('active');
+          tab.setAttribute('aria-selected','true');
+        } else {
+          el.classList.remove('active');
+          tab.classList.remove('active');
+          tab.setAttribute('aria-selected','false');
+        }
+      });
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      history.replaceState(null,'','#opsi-' + num);
     }
 
-    // Check URL Hash on Load
-    window.addEventListener('DOMContentLoaded', () => {
-      const hash = window.location.hash;
-      if (hash === '#opsi-2') switchOption(2);
-      else if (hash === '#opsi-3') switchOption(3);
-      else switchOption(1);
+    // Arrow key nav for tabs
+    document.querySelectorAll('.tab-btn').forEach(function(btn, idx, arr) {
+      btn.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowRight') { var n = arr[(idx+1)%arr.length]; n.focus(); n.click(); }
+        if (e.key === 'ArrowLeft')  { var n = arr[(idx-1+arr.length)%arr.length]; n.focus(); n.click(); }
+      });
     });
 
-    // 2. Interactive Simulator Logic for Option 1
-    let currentBalance = 4000000;
-    const targetBalance = 5000000;
+    // Init from hash
+    (function() {
+      var h = window.location.hash;
+      if (h === '#opsi-2') showPage(2);
+      else if (h === '#opsi-3') showPage(3);
+      else showPage(1);
+    })();
 
-    function formatRupiah(num) {
-      return 'Rp ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    }
+    /* ================================================================
+       SIMULATOR — Autoplay Engine
+    ================================================================ */
+    var simBal = 4000000, simTgt = 5000000;
+    var autoTimer = null, highlightTimer = null;
+    var pauseTimer = null;
+    var isPaused = false;
+    var stepIndex = 0;
 
-    function updateDemoUI() {
-      const currentEl = document.getElementById('demo-current');
-      const barEl = document.getElementById('demo-bar');
-      const percentEl = document.getElementById('demo-percent');
-      const remainingEl = document.getElementById('demo-remaining');
-      const badgeEl = document.getElementById('demo-badge');
-      const bannerEl = document.getElementById('demo-banner');
+    // Scripted sequence: list of actions with actor names
+    var autoSteps = [
+      { actor: 'Dewi',  type: 'deposit',  btn: 'sbtn-d500',  amount: 500000 },
+      { actor: 'Rian',  type: 'deposit',  btn: 'sbtn-d1000', amount: 1000000 },
+      { actor: 'Sarah', type: 'deposit',  btn: 'sbtn-d500',  amount: 500000 },
+      { actor: 'Anda',  type: 'withdraw', btn: 'sbtn-w500',  amount: 500000 },
+      { actor: 'Budi',  type: 'deposit',  btn: 'sbtn-d1000', amount: 1000000 },
+      { actor: 'Sarah', type: 'deposit',  btn: 'sbtn-d500',  amount: 500000 },
+      { actor: 'Rian',  type: 'deposit',  btn: 'sbtn-d1000', amount: 1000000 },
+      // reset + replay
+      { actor: null,    type: 'reset',    btn: 'sbtn-reset', amount: 0 },
+    ];
 
-      currentEl.innerText = formatRupiah(currentBalance);
+    function toRp(n) { return 'Rp\u00a0' + n.toLocaleString('id-ID'); }
 
-      const percent = Math.min(100, Math.round((currentBalance / targetBalance) * 100));
-      barEl.style.width = percent + '%';
-      percentEl.innerText = percent + '% tercapai';
-
-      const isAchieved = currentBalance >= targetBalance;
-
-      if (isAchieved) {
-        badgeEl.className = 'px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 border border-amber-500/30 text-amber-400';
-        badgeEl.innerText = '✓ Target Tercapai (Lunas)';
-        remainingEl.innerHTML = '<span class="text-amber-400 font-bold">✓ Lunas</span>';
-        bannerEl.classList.remove('hidden');
-        barEl.className = 'bg-gradient-to-r from-amber-400 to-emerald-400 h-full rounded-full transition-all duration-300';
+    function refreshSim() {
+      var pct = Math.min(100, Math.round((simBal / simTgt) * 100));
+      var done = simBal >= simTgt;
+      document.getElementById('sim-current').textContent = toRp(simBal);
+      var bar = document.getElementById('sim-bar');
+      bar.style.width = pct + '%';
+      bar.setAttribute('aria-valuenow', pct);
+      document.getElementById('sim-pct').textContent = pct + '% tercapai';
+      var banner = document.getElementById('milestone-banner');
+      var status = document.getElementById('sim-status');
+      var rem    = document.getElementById('sim-rem');
+      if (done) {
+        banner.classList.add('visible');
+        status.className = 'sim-status-badge sim-status-done'; status.textContent = 'Lunas';
+        bar.classList.add('done');
+        rem.innerHTML = '<span style="color:var(--amber);font-weight:700;">Lunas</span>';
       } else {
-        badgeEl.className = 'px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 border border-emerald-500/20 text-emerald-400';
-        badgeEl.innerText = 'Status: Aktif';
-        const remaining = Math.max(0, targetBalance - currentBalance);
-        remainingEl.innerText = formatRupiah(remaining) + ' lagi';
-        bannerEl.classList.add('hidden');
-        barEl.className = 'bg-gradient-to-r from-emerald-500 to-teal-400 h-full rounded-full transition-all duration-300';
+        banner.classList.remove('visible');
+        status.className = 'sim-status-badge sim-status-active'; status.textContent = 'Status: Aktif';
+        bar.classList.remove('done');
+        rem.textContent = toRp(simTgt - simBal) + ' lagi';
       }
     }
 
-    function demoDeposit(amount) {
-      currentBalance += amount;
-      updateDemoUI();
+    function addAct(type, amount, actor) {
+      var list = document.getElementById('activity-list');
+      var item = document.createElement('div');
+      item.className = 'activity-item';
+      var name = actor || 'Anda';
+      item.innerHTML =
+        '<span class="activity-dot activity-dot-' + type + '"></span>' +
+        '<span class="activity-text">' + name + ' ' + (type==='deposit'?'menyetor':'menarik') +
+        ' <span class="activity-amount activity-amount-' + type + '">' + toRp(amount) + '</span></span>' +
+        '<span class="activity-time">baru saja</span>';
+      list.insertBefore(item, list.firstChild);
+      while (list.children.length > 6) list.removeChild(list.lastChild);
     }
 
-    function demoWithdraw(amount) {
-      if (currentBalance - amount < 0) {
-        alert('Proteksi Anti-Minus: Saldo tidak boleh negatif!');
+    function flashBtn(btnId) {
+      var btn = document.getElementById(btnId);
+      if (!btn) return;
+      btn.classList.remove('btn-press');
+      void btn.offsetWidth; // reflow to restart animation
+      btn.classList.add('btn-press');
+      btn.addEventListener('animationend', function() { btn.classList.remove('btn-press'); }, { once: true });
+    }
+
+    function clearNextHighlight() {
+      document.querySelectorAll('.sim-btn.auto-next').forEach(function(b) { b.classList.remove('auto-next'); });
+    }
+
+    function setAutoplayStatus(paused) {
+      var el = document.getElementById('autoplay-status');
+      var txt = document.getElementById('autoplay-status-text');
+      if (!el) return;
+      if (paused) {
+        el.classList.add('is-paused');
+        txt.textContent = 'Dijeda';
+      } else {
+        el.classList.remove('is-paused');
+        txt.textContent = 'Berjalan otomatis';
+      }
+    }
+
+    function setNextLabel(text) {
+      var el = document.getElementById('sim-next-label');
+      if (el) el.innerHTML = text;
+    }
+
+    function scheduleNext() {
+      if (autoTimer) clearTimeout(autoTimer);
+      var step = autoSteps[stepIndex % autoSteps.length];
+
+      // Show next-action label
+      if (step.type === 'reset') {
+        setNextLabel('<span>Demo akan diulang dari awal...</span>');
+      } else if (step.type === 'deposit') {
+        setNextLabel('<span>' + step.actor + '</span> akan menyetor ' + toRp(step.amount));
+      } else {
+        setNextLabel('<span>' + step.actor + '</span> akan menarik ' + toRp(step.amount));
+      }
+
+      // Highlight the target button after short delay
+      highlightTimer = setTimeout(function() {
+        clearNextHighlight();
+        var btn = document.getElementById(step.btn);
+        if (btn) btn.classList.add('auto-next');
+      }, 300);
+
+      // Execute action after 2.5s
+      autoTimer = setTimeout(function() {
+        clearNextHighlight();
+        flashBtn(step.btn);
+
+        if (step.type === 'deposit') {
+          simBal += step.amount;
+          refreshSim();
+          addAct('deposit', step.amount, step.actor);
+        } else if (step.type === 'withdraw') {
+          if (simBal - step.amount >= 0) {
+            simBal -= step.amount;
+            refreshSim();
+            addAct('withdraw', step.amount, step.actor);
+          }
+        } else if (step.type === 'reset') {
+          simBal = 4000000;
+          refreshSim();
+        }
+
+        stepIndex++;
+        if (!isPaused) scheduleNext();
+      }, 2500);
+    }
+
+    function pauseAutoplay(duration) {
+      isPaused = true;
+      setAutoplayStatus(true);
+      clearNextHighlight();
+      setNextLabel('Demo dijeda. Melanjutkan otomatis...');
+      if (autoTimer)   clearTimeout(autoTimer);
+      if (highlightTimer) clearTimeout(highlightTimer);
+      if (pauseTimer)  clearTimeout(pauseTimer);
+      pauseTimer = setTimeout(function() {
+        isPaused = false;
+        setAutoplayStatus(false);
+        scheduleNext();
+      }, duration || 8000);
+    }
+
+    // Manual controls — pause autoplay briefly
+    function manualSimDeposit(n) {
+      simBal += n; refreshSim(); addAct('deposit', n, 'Anda');
+      pauseAutoplay(8000);
+    }
+    function manualSimWithdraw(n) {
+      if (simBal - n < 0) {
+        var note = document.getElementById('sim-note');
+        note.style.color = 'var(--rose)';
+        note.textContent = 'Proteksi anti-minus aktif: saldo tidak boleh negatif. Penarikan ditolak.';
+        setTimeout(function() {
+          note.style.color = '';
+          note.textContent = 'Klik tombol kapan saja untuk berinteraksi langsung. Demo akan melanjutkan otomatis.';
+        }, 3000);
         return;
       }
-      currentBalance -= amount;
-      updateDemoUI();
+      simBal -= n; refreshSim(); addAct('withdraw', n, 'Anda');
+      pauseAutoplay(8000);
+    }
+    function manualSimReset() {
+      simBal = 4000000; stepIndex = 0; refreshSim();
+      pauseAutoplay(4000);
     }
 
-    function demoReset() {
-      currentBalance = 4000000;
-      updateDemoUI();
-    }
+    // Start autoplay on page load
+    setTimeout(function() {
+      setAutoplayStatus(false);
+      scheduleNext();
+    }, 1800);
   </script>
 </body>
 </html>

@@ -57,6 +57,59 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Autoplay Simulator Animations */
+@keyframes btn-countdown {
+  0% {
+    opacity: 1;
+    clip-path: inset(0 100% 0 0);
+  }
+  100% {
+    opacity: 1;
+    clip-path: inset(0 0% 0 0);
+  }
+}
+
+@keyframes btn-flash {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(0.93);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.sim-btn-auto-next {
+  box-shadow: 0 0 0 2px #10b981 !important;
+  position: relative;
+  z-index: 10;
+}
+
+.sim-btn-auto-next::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: rgba(16, 185, 129, 0.15);
+  animation: btn-countdown 2.2s linear forwards;
+  pointer-events: none;
+}
+
+.sim-btn-withdraw.sim-btn-auto-next {
+  box-shadow: 0 0 0 2px #f43f5e !important;
+}
+
+.sim-btn-withdraw.sim-btn-auto-next::after {
+  background: rgba(244, 63, 94, 0.15);
+}
+
+.sim-btn-press {
+  animation: btn-flash 0.22s ease !important;
+}
+
+
 /* Reduced Motion Override */
 @media (prefers-reduced-motion: reduce) {
   *,
