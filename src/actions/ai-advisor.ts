@@ -5,6 +5,13 @@ import { getGoalsByWorkspace } from '@/actions/goals'
 import { getTransactionsByWorkspace } from '@/actions/transactions'
 import { getCategoriesByWorkspace } from '@/actions/categories'
 import { formatRupiah } from '@/lib/utils'
+import type { Goal } from '@/types/database'
+import {
+  calculateClosestGoal,
+  type ClosestGoalInfo,
+} from '@/lib/ai/advisor-helpers'
+
+export type { ClosestGoalInfo }
 
 export interface AdvisorChatMessage {
   role: 'user' | 'assistant'
@@ -25,14 +32,18 @@ export interface AdvisorResponse {
   healthScore?: number
   healthSummary?: string
   suggestedFollowUps?: string[]
+  closestGoal?: ClosestGoalInfo | null
   error?: string
   providerName?: string
 }
 
+function todayZero(d: Date) {
+  d.setHours(0, 0, 0, 0)
+}
+
 /**
  * Server Action: Konsultasi Finansial dengan AI Advisor "Nabu"
- * Membaca ringkasan agregasi keuangan workspace secara aman dan memberikan
- * analisis serta rekomendasi perencanaan tabungan personal/grup.
+ * Diperkaya pengetahuan finansial luas dan perhitungan deadline terdekat
  */
 export async function askFinancialAdvisorAction(
   input: AskAdvisorInput
@@ -66,7 +77,10 @@ export async function askFinancialAdvisorAction(
   const totalBalance = goals.reduce((sum, g) => sum + (Number(g.current_amount) || 0), 0)
   const overallProgress = totalTarget > 0 ? Math.round((totalBalance / totalTarget) * 100) : 0
 
-  // Filter 30 hari terakhir
+  // 2. Analisis Target Deadline Terdekat
+  const closestGoal = calculateClosestGoal(goals)
+
+  // 3. Filter transaksi 30 hari terakhir
   const now = new Date()
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
 
@@ -90,6 +104,10 @@ export async function askFinancialAdvisorAction(
     health = 'needs_attention'
     healthSummary = 'Belum Ada Target Aktif ⚠️'
     score = 40
+  } else if (closestGoal && closestGoal.status === 'urgent') {
+    health = 'needs_attention'
+    healthSummary = `Target "${closestGoal.name}" Mendekati Batas Waktu! ⏳`
+    score = 65
   } else if (recentWithdrawals > recentDeposits && recentDeposits > 0) {
     health = 'warning'
     healthSummary = 'Pengeluaran Melebihi Setoran (30 Hari) 🔻'
@@ -100,7 +118,7 @@ export async function askFinancialAdvisorAction(
     score = 90
   }
 
-  // Rangkum konteks untuk AI
+  // Rangkum seluruh target
   const goalsSummary = goals
     .map((g, idx) => {
       const progress =
@@ -108,37 +126,76 @@ export async function askFinancialAdvisorAction(
           ? Math.round(((Number(g.current_amount) || 0) / Number(g.target_amount)) * 100)
           : 0
       const remaining = Math.max(0, Number(g.target_amount) - Number(g.current_amount))
-      return `${idx + 1}. "${g.name}": Terkumpul ${formatRupiah(g.current_amount)} dari target ${formatRupiah(g.target_amount)} (${progress}% tercapai). Sisa kebutuhan: ${formatRupiah(remaining)}.${g.deadline ? ` Batas waktu: ${g.deadline}.` : ''}`
+      return `${idx + 1}. "${g.name}": Terkumpul ${formatRupiah(g.current_amount)} / ${formatRupiah(g.target_amount)} (${progress}% tercapai). Sisa: ${formatRupiah(remaining)}.${g.deadline ? ` Batas Waktu: ${g.deadline}.` : ' (Belum ada deadline spesifik).'}`
     })
     .join('\n')
 
-  const systemPrompt = `Kamu adalah "Nabu", Konsultan Finansial & Tabungan Pribadi resmi di aplikasi Nabungin.
-Karaktermu: Sangat ramah, solutif, empatik, berbasis data riil, dan memberikan langkah konkret (actionable steps) dalam bahasa Indonesia santai namun profesional.
+  // Rangkum info prioritas deadline terdekat untuk prompt
+  let deadlinePromptContext = 'Saat ini belum ada target dengan batas waktu spesifik.'
+  if (closestGoal) {
+    deadlinePromptContext = `
+🔥 TARGET DENGAN DEADLINE TERDEKAT (PRIORITAS NOMOR 1):
+- Nama Target: "${closestGoal.name}"
+- Saldo Saat Ini: ${formatRupiah(closestGoal.currentAmount)}
+- Target Total: ${formatRupiah(closestGoal.targetAmount)}
+- Sisa Nominal yang Dibutuhkan: ${formatRupiah(closestGoal.remainingAmount)}
+- Batas Waktu: ${closestGoal.deadline ? `${closestGoal.deadline} (Sisa ${closestGoal.remainingDays} hari)` : 'Estimasi horizon 90 hari'}
+- REKOMENDASI NOMINAL TABUNGAN AGAR TEPAT WAKTU:
+  * SETORAN PER HARI: ${formatRupiah(closestGoal.dailyRequired)} / hari
+  * SETORAN PER MINGGU: ${formatRupiah(closestGoal.weeklyRequired)} / minggu
+  * SETORAN PER BULAN: ${formatRupiah(closestGoal.monthlyRequired)} / bulan
+- Status Waktu: ${closestGoal.status === 'urgent' ? 'SANGAT MENDESAK (< 30 hari) ⚠️' : closestGoal.status === 'moderate' ? 'SEDANG (30-90 hari)' : 'CUKUP LONGGAR (> 90 hari)'}`
+  }
 
-Konteks Finansial Nyata Pengguna Saat Ini di Ruang Tabungan:
-- Total Akumulasi Tabungan: ${formatRupiah(totalBalance)}
+  // System Prompt komprehensif dengan perluasan domain finansial
+  const systemPrompt = `Kamu adalah "Nabu", Konsultan Finansial & Tabungan Pribadi cerdas, empatik, dan interaktif di aplikasi Nabungin.
+Karaktermu:
+- Sangat komunikatif, bersahabat, berbasis data nyata, dan memberikan solusi yang realistis untuk masyarakat Indonesia.
+- Menguasai berbagai metodologi perencanaan keuangan modern: Aturan 50/30/20, Micro-saving/Kaizen (nabung receh harian), Sinking Funds, Zero-based Budgeting, Dana Darurat sesuai tanggungan, dan manajemen keuangan kolaboratif/grup.
+
+=======================================================
+📊 DATA KEUANGAN PENGGUNA SAAT INI (DATA RIIL):
+- Total Akumulasi Saldo Tabungan: ${formatRupiah(totalBalance)}
 - Total Target Keseluruhan: ${formatRupiah(totalTarget)} (Progres Total: ${overallProgress}%)
 - Mutasi 30 Hari Terakhir:
   * Total Setoran (+): ${formatRupiah(recentDeposits)}
   * Total Penarikan (-): ${formatRupiah(recentWithdrawals)}
   * Tabungan Bersih: ${formatRupiah(netSavings30Days)}
 - Jumlah Target Tabungan Aktif: ${goals.length} target
-Daftar Target:
+
+${deadlinePromptContext}
+
+Daftar Seluruh Target Tabungan:
 ${goalsSummary || '(Belum ada target tabungan yang dibuat)'}
 
-Aturan Menjawab:
-1. Jawab pertanyaan pengguna dengan menganalisis data riil di atas secara cerdas.
-2. Berikan angka estimasi yang logis (misal: nominal yang perlu disetor per minggu/bulan, estimasi waktu pencapaian).
-3. Gunakan formatting Markdown yang mudah dibaca (bullet points, bold untuk angka penting, dan emoji secukupnya).
-4. Jangan memberikan rekomendasi instrumen investasi berisiko tinggi (kripto/saham gorengan). Fokus pada disiplin menabung, dana darurat, dan alokasi realistis.
-5. Panjang jawaban proporsional (ringkas, padat, dan menyenangkan dibaca).`
+Daftar Pos Kategori Tersedia:
+${categories.map((c) => `- ${c.name}`).join(', ') || 'Umum, Kebutuhan Pokok, Tabungan'}
+=======================================================
+
+🧠 PENGETAHUAN & ATURAN KHUSUS NABU:
+1. PRIORITAS DEADLINE TERDEKAT:
+   - Jika pengguna bertanya tentang "rekomendasi nabung", "strategi", "apa yang harus diselesaikan dulu", atau "berapa harus nabung":
+     WAJIB mengangkat target dengan deadline terdekat di atas sebagai prioritas utama!
+     Sebutkan secara eksplisit rekomendasi setoran **per hari (${closestGoal ? formatRupiah(closestGoal.dailyRequired) : 'Rp ...'})** atau **per minggu (${closestGoal ? formatRupiah(closestGoal.weeklyRequired) : 'Rp ...'})** agar pengguna punya gambaran langkah kecil harian yang jelas.
+2. PERENCANAAN GAJI & ANGGARAN:
+   - Jika pengguna bertanya tentang gaji (misal gaji UMR 3-5 juta, atau 10 juta):
+     Bantu memecah dengan metode 50/30/20 (50% Kebutuhan, 30% Keinginan, 20% Tabungan/Investasi) atau 70/20/10 jika biaya hidup tinggi.
+3. PERBEDAAN SINKING FUND VS DANA DARURAT:
+   - Dana Darurat: untuk hal tak terduga (PHK, sakit). Idealnya 3-6x pengeluaran bulanan (lajang) atau 6-12x (berkeluarga).
+   - Sinking Fund: tabungan yang sudah terencana waktu dan nominalnya (servis kendaraan, qurban, beli laptop, tiket liburan).
+4. TIPS MENGATASI BONCOS & IMPULSE BUYING:
+   - Kenalkan aturan jeda 48 jam sebelum membeli barang non-esensial.
+   - Sarankan teknik "micro-saving": manfaatkan fitur **⚡ Smart Quick-Add Nabungin** untuk mencatat sisa uang belanjaan harian (10rb - 20rb) agar tabungan tumbuh tanpa terasa berat.
+5. GAYA PENULISAN:
+   - Gunakan format Markdown yang rapi: gunakan tabel jika membandingkan angka atau opsi waktu, bullet points untuk tips, dan tebalkan angka penting (**Rp ...**).
+   - Jangan rekomendasikan investasi berisiko tinggi (kripto spekulatif, saham gorengan).
+   - Di akhir jawaban, berikan 1 pertanyaan pemantik santai agar percakapan tetap mengalir secara natural.`
 
   const apiKey =
     input.customApiKey?.trim() ||
     process.env.GROQ_API_KEY ||
     process.env.GEMINI_API_KEY
 
-  // 1. Coba Groq AI jika ada
   const groqKey =
     input.customApiKey?.startsWith('gsk_')
       ? input.customApiKey
@@ -151,7 +208,7 @@ Aturan Menjawab:
       ]
 
       if (input.conversationHistory && input.conversationHistory.length > 0) {
-        input.conversationHistory.slice(-4).forEach((h) => {
+        input.conversationHistory.slice(-6).forEach((h) => {
           messages.push({
             role: h.role === 'assistant' ? 'assistant' : 'user',
             content: h.content,
@@ -171,7 +228,7 @@ Aturan Menjawab:
           model: 'openai/gpt-oss-120b',
           messages,
           temperature: 0.3,
-          max_tokens: 800,
+          max_tokens: 950,
         }),
       })
 
@@ -185,7 +242,8 @@ Aturan Menjawab:
             financialHealth: health,
             healthScore: score,
             healthSummary,
-            suggestedFollowUps: generateFollowUps(goals),
+            suggestedFollowUps: generateDynamicFollowUps(closestGoal, goals),
+            closestGoal,
             providerName: 'Groq Llama 3.3 / GPT-OSS',
           }
         }
@@ -195,8 +253,14 @@ Aturan Menjawab:
     }
   }
 
-  // 2. Fallback Heuristik Lokal jika API offline
-  const fallbackReply = generateLocalAdvisorAdvice(cleanMessage, goals, totalBalance, totalTarget)
+  // Fallback Heuristik Lokal
+  const fallbackReply = generateLocalAdvisorAdvice(
+    cleanMessage,
+    goals,
+    closestGoal,
+    totalBalance,
+    totalTarget
+  )
 
   return {
     success: true,
@@ -204,50 +268,70 @@ Aturan Menjawab:
     financialHealth: health,
     healthScore: score,
     healthSummary,
-    suggestedFollowUps: generateFollowUps(goals),
+    suggestedFollowUps: generateDynamicFollowUps(closestGoal, goals),
+    closestGoal,
     providerName: 'Nabu Smart Advisor (Local Engine)',
   }
 }
 
 /**
- * Generate pertanyaan lanjutan yang relevan dengan target pengguna
+ * Pertanyaan lanjutan yang adaptif terhadap deadline dan target riil
  */
-function generateFollowUps(goals: Array<{ name: string }>): string[] {
-  const firstName = goals[0]?.name || 'Target Utama'
+function generateDynamicFollowUps(
+  closestGoal: ClosestGoalInfo | null,
+  goals: Goal[]
+): string[] {
+  if (closestGoal) {
+    return [
+      `🎯 Berapa harus nabung per hari/minggu untuk "${closestGoal.name}"?`,
+      '💡 Bagaimana membagi porsi gaji 5 juta dengan metode 50/30/20?',
+      '🛡️ Berapa jumlah dana darurat ideal untuk kondisi saya?',
+    ]
+  }
+
   return [
-    `Berapa setoran mingguan ideal untuk ${firstName}?`,
-    'Bagaimana cara membagi porsi tabungan jika ada pengeluaran tak terduga?',
-    'Buatkan strategi disiplin menabung 30 hari ke depan',
+    '🎯 Target mana yang paling mendesak untuk diselesaikan?',
+    '💡 Bagaimana strategi menabung harian tanpa terasa berat?',
+    '📊 Analisis performa tabungan saya saat ini',
   ]
 }
 
 /**
- * Fallback penasihat keuangan lokal
+ * Fallback penasihat keuangan lokal yang diperkaya
  */
 function generateLocalAdvisorAdvice(
   message: string,
-  goals: Array<{ name: string; current_amount: number; target_amount: number }>,
+  goals: Goal[],
+  closestGoal: ClosestGoalInfo | null,
   totalBalance: number,
   totalTarget: number
 ): string {
-  const firstGoal = goals[0]
-  if (!firstGoal) {
-    return `Halo! Saya **Nabu**, konsultan tabungan pribadimu di Nabungin. 
+  if (goals.length === 0) {
+    return `Halo! Saya **Nabu**, konsultan tabungan pribadimu di Nabungin. 🌿
 
-Saat ini kamu belum memiliki target tabungan aktif di ruang ini. Langkah terbaik pertama adalah **membuat satu target spesifik** (misalnya *Dana Darurat* atau *Liburan*). Setelah ada target, saya dapat membantumu menghitung jadwal setoran yang paling realistis!`
+Saat ini kamu belum memiliki target tabungan aktif di ruang ini. 
+Langkah awal terbaik adalah **membuat satu target spesifik** (misalnya *Dana Darurat* atau *Liburan*). Setelah target dibuat, saya dapat menghitung jadwal setoran per hari atau per minggu yang paling realistis!`
   }
 
-  const sisa = Math.max(0, Number(firstGoal.target_amount) - Number(firstGoal.current_amount))
-  const cicil6Bulan = Math.round(sisa / 6)
-  const cicilMingguan = Math.round(sisa / 24)
+  if (closestGoal) {
+    return `Halo! Saya telah menganalisis ruang tabunganmu. 
 
-  return `Halo! Berdasarkan data tabunganmu saat ini:
-- **Total Saldo Terkumpul**: ${formatRupiah(totalBalance)}
-- **Target Terdekat**: "${firstGoal.name}" (${formatRupiah(firstGoal.current_amount)} / ${formatRupiah(firstGoal.target_amount)})
-- **Sisa yang dibutuhkan**: ${formatRupiah(sisa)}
+🎯 **Prioritas Utama: Target dengan Batas Waktu Terdekat**
+- **Nama Target**: "${closestGoal.name}"
+- **Terkumpul**: ${formatRupiah(closestGoal.currentAmount)} dari ${formatRupiah(closestGoal.targetAmount)}
+- **Sisa Kebutuhan**: ${formatRupiah(closestGoal.remainingAmount)}
+${closestGoal.deadline ? `- **Batas Waktu**: ${closestGoal.deadline} (Sisa **${closestGoal.remainingDays} hari** lagi)` : '- **Horizon Waktu**: 90 hari'}
 
-💡 **Rekomendasi Strategi Nabu:**
-1. Untuk melunasi sisa target dalam **6 bulan**, sisihkan sekitar **${formatRupiah(cicil6Bulan)} / bulan** (atau sekitar **${formatRupiah(cicilMingguan)} / minggu**).
-2. Terapkan metode *Pay Yourself First* — sisihkan dana tabungan di hari pertama menerima pemasukan sebelum dialokasikan untuk kebutuhan sekunder.
-3. Manfaatkan fitur **⚡ Smart Quick-Add** untuk segera mencatat setiap sisa uang harian agar tabungan terus bertambah tanpa terasa memberatkan!`
+💡 **Rekomendasi Setoran Tepat Waktu:**
+- **Harian**: Sekitar **${formatRupiah(closestGoal.dailyRequired)} / hari**
+- **Mingguan**: Sekitar **${formatRupiah(closestGoal.weeklyRequired)} / minggu**
+- **Bulanan**: Sekitar **${formatRupiah(closestGoal.monthlyRequired)} / bulan**
+
+✨ **Tips Nabu:**
+1. Sisihkan **${formatRupiah(closestGoal.dailyRequired)}** setiap pagi atau sore dengan fitur **⚡ Smart Quick-Add**.
+2. Jika ada sisa uang belanja harian, segera masukkan sebagai setoran ekstra agar target tercapai lebih cepat!`
+  }
+
+  return `Halo! Total saldo tabunganmu saat ini adalah **${formatRupiah(totalBalance)}** dari total target **${formatRupiah(totalTarget)}**.
+Untuk mempercepat pencapaian target, buat jadwal setoran mingguan yang konsisten dan catat mutasi harian secara disiplin!`
 }

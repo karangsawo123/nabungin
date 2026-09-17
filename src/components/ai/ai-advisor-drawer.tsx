@@ -14,6 +14,8 @@ import {
   ChevronRight,
   Maximize2,
   Minimize2,
+  Target,
+  Clock,
 } from 'lucide-react'
 import {
   askFinancialAdvisorAction,
@@ -21,6 +23,7 @@ import {
   type AdvisorResponse,
 } from '@/actions/ai-advisor'
 import { useWorkspace } from '@/components/groups/workspace-context'
+import { formatRupiah } from '@/lib/utils'
 
 export function AiAdvisorDrawer() {
   const { activeGroupId, activeGroup } = useWorkspace()
@@ -30,16 +33,17 @@ export function AiAdvisorDrawer() {
     {
       role: 'assistant',
       content:
-        'Halo! Saya **Nabu**, konsultan tabungan pribadimu di Nabungin. 🌿\n\nSaya telah terhubung secara aman dengan ruang tabunganmu. Kamu bisa menanyakan strategi alokasi tabungan, evaluasi kebiasaan menabung, atau simulasi target impianmu!',
+        'Halo! Saya **Nabu**, konsultan tabungan pribadimu di Nabungin. 🌿\n\nSaya telah terhubung secara aman dengan ruang tabunganmu. Saya bisa membantumu menghitung **target dengan deadline terdekat**, menyarankan **setoran per hari atau per minggu**, membagi porsi gaji, serta mengevaluasi mutasimu!',
     },
   ])
   const [inputMessage, setInputMessage] = React.useState('')
   const [isLoading, setIsLoading] = React.useState(false)
   const [advisorMeta, setAdvisorMeta] = React.useState<AdvisorResponse | null>(null)
   const [suggestedQuestions, setSuggestedQuestions] = React.useState<string[]>([
-    '📊 Analisis performa tabungan saya saat ini',
-    '🎯 Target mana yang paling mendesak untuk diselesaikan?',
-    '💡 Bagaimana strategi menabung realistis tiap bulan?',
+    '🎯 Berapa harus nabung per hari/minggu untuk target terdekat?',
+    '📊 Analisis performa tabungan & kebiasaan mutasi saya',
+    '💡 Cara bagi porsi gaji dengan metode 50/30/20',
+    '🛡️ Berapa jumlah dana darurat ideal untuk kondisi saya?',
   ])
 
   const chatEndRef = React.useRef<HTMLDivElement>(null)
@@ -132,6 +136,80 @@ export function AiAdvisorDrawer() {
   // Format simple markdown into JSX
   const renderFormattedContent = (content: string) => {
     return content.split('\n\n').map((paragraph, idx) => {
+      const trimmed = paragraph.trim()
+
+      // Horizontal rule
+      if (trimmed === '---') {
+        return <hr key={idx} className="my-2 border-slate-800" />
+      }
+
+      // Headers
+      if (trimmed.startsWith('### ')) {
+        return (
+          <h4 key={idx} className="mt-2.5 mb-1 font-bold text-white text-xs">
+            <FormattedInline text={trimmed.replace('### ', '')} />
+          </h4>
+        )
+      }
+      if (trimmed.startsWith('## ')) {
+        return (
+          <h3 key={idx} className="mt-3 mb-1.5 font-bold text-emerald-400 text-xs uppercase tracking-wider flex items-center gap-1.5">
+            <FormattedInline text={trimmed.replace('## ', '')} />
+          </h3>
+        )
+      }
+
+      // Blockquotes
+      if (trimmed.startsWith('> ')) {
+        return (
+          <blockquote key={idx} className="my-1.5 rounded-r-lg border-l-2 border-emerald-400 bg-emerald-500/5 px-2.5 py-1.5 text-[11px] text-slate-300">
+            <FormattedInline text={trimmed.replace(/^>\s*/, '')} />
+          </blockquote>
+        )
+      }
+
+      // Markdown Tables
+      if (trimmed.includes('|') && trimmed.includes('\n')) {
+        const lines = trimmed.split('\n').filter((l) => l.trim().startsWith('|'))
+        if (lines.length >= 2) {
+          const parseRow = (rowStr: string) =>
+            rowStr
+              .split('|')
+              .map((s) => s.trim())
+              .filter((s, i, arr) => i > 0 && i < arr.length - 1)
+
+          const headerRow = parseRow(lines[0])
+          const dataRows = lines.slice(2).map(parseRow)
+
+          return (
+            <div key={idx} className="my-2 overflow-x-auto rounded-xl border border-slate-800 bg-[#0B0F19] p-2">
+              <table className="w-full text-left text-[11px]">
+                <thead>
+                  <tr className="border-b border-slate-800 text-emerald-400 font-bold">
+                    {headerRow.map((h, i) => (
+                      <th key={i} className="p-1.5 whitespace-nowrap">
+                        <FormattedInline text={h} />
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {dataRows.map((row, rIdx) => (
+                    <tr key={rIdx} className="border-b border-slate-800/40 text-slate-300 hover:bg-slate-800/20">
+                      {row.map((c, cIdx) => (
+                        <td key={cIdx} className="p-1.5">
+                          <FormattedInline text={c} />
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )
+        }
+      }
+
       // List item checking
       if (paragraph.startsWith('- ') || paragraph.startsWith('* ') || /^\d+\.\s/.test(paragraph)) {
         const items = paragraph.split('\n')
@@ -229,6 +307,40 @@ export function AiAdvisorDrawer() {
             </button>
           </div>
         </div>
+
+        {/* Closest Deadline Highlight Banner */}
+        {advisorMeta?.closestGoal && (
+          <div className="border-b border-amber-500/20 bg-gradient-to-r from-amber-500/10 via-[#121929] to-emerald-500/10 px-4 py-2.5 text-xs">
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-1.5 font-bold text-amber-300">
+                <Target className="h-3.5 w-3.5 text-amber-400 shrink-0" />
+                <span>Target Deadline Terdekat:</span>
+              </span>
+              <span className="font-mono text-[11px] font-extrabold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                {formatRupiah(advisorMeta.closestGoal.dailyRequired)} / hari
+              </span>
+            </div>
+            <div className="mt-1 flex items-center justify-between text-[11px] text-slate-300">
+              <span className="truncate font-semibold text-white">{advisorMeta.closestGoal.name}</span>
+              <span className="text-slate-400 text-[10px] shrink-0">
+                {advisorMeta.closestGoal.deadline
+                  ? `Sisa ${advisorMeta.closestGoal.remainingDays} hari (${advisorMeta.closestGoal.deadline})`
+                  : 'Horizon 90 hari'}
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() =>
+                handleSendMessage(
+                  `Bagaimana rekomendasi jadwal setoran harian dan mingguan untuk menyelesaikan target "${advisorMeta.closestGoal?.name}" tepat waktu?`
+                )
+              }
+              className="mt-1.5 text-[10px] font-bold text-emerald-400 hover:text-emerald-300 hover:underline inline-flex items-center gap-1 cursor-pointer"
+            >
+              <span>⚡ Minta strategi pelunasan target ini →</span>
+            </button>
+          </div>
+        )}
 
         {/* Health Status Ribbon */}
         {advisorMeta?.healthSummary && (
