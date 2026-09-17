@@ -39,20 +39,26 @@ export default async function HomePage() {
       <main className="flex-1">
         {/* Hero Section with 3D Full Image Background */}
         <section className="relative overflow-hidden bg-[#021F17] text-white min-h-[92vh] lg:min-h-[calc(100vh-64px)] flex flex-col justify-between pt-8 pb-8 sm:pt-14 sm:pb-12 lg:py-16">
-          {/* 3D Background Image: Centered on mobile, aligned to the right on desktop */}
+          {/* Mobile 3D Portrait Background (9:16) */}
           <div
-            className="absolute inset-0 bg-no-repeat bg-bottom lg:bg-[right_6%_center] xl:bg-[right_12%_center] bg-cover lg:bg-contain pointer-events-none opacity-95 transition-all"
+            className="absolute inset-0 bg-cover bg-bottom bg-no-repeat pointer-events-none opacity-95 lg:hidden"
             style={{ backgroundImage: "url('/nabungin-logo-artwork.svg')" }}
           />
 
+          {/* Desktop 3D Widescreen Landscape Background (16:9, 1920x1080) */}
+          <div
+            className="absolute inset-0 hidden lg:block bg-cover bg-[88%_center] xl:bg-[92%_center] bg-no-repeat pointer-events-none opacity-95 transition-all"
+            style={{ backgroundImage: "url('/nabungin-landscape.svg')" }}
+          />
+
           {/* Vignette & Contrast Overlays for Supreme Text Legibility */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#021F17]/90 via-[#021F17]/35 to-transparent lg:bg-gradient-to-r lg:from-[#021F17] lg:via-[#021F17]/85 lg:to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#021F17]/90 via-[#021F17]/35 to-transparent lg:bg-gradient-to-r lg:from-[#021F17] lg:via-[#021F17]/90 lg:to-transparent pointer-events-none" />
           <div className="pointer-events-none absolute -top-24 left-1/4 w-[750px] h-[450px] bg-emerald-500/15 rounded-full blur-[140px]" />
           <div className="pointer-events-none absolute top-1/3 right-1/4 w-[450px] h-[450px] bg-amber-500/10 rounded-full blur-[120px]" />
 
           {/* Hero Content: Centered on mobile, left-aligned on desktop */}
           <div className="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 my-auto">
-            <div className="max-w-2xl text-center lg:text-left space-y-5 sm:space-y-6">
+            <div className="max-w-xl text-center lg:text-left space-y-5 sm:space-y-6">
               {/* Frosted Pill Badge */}
               <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-950/70 backdrop-blur-md px-3.5 py-1 text-xs font-bold text-emerald-300 shadow-md">
                 <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
@@ -69,16 +75,16 @@ export default async function HomePage() {
               </h1>
 
               {/* Subtitle */}
-              <p className="mx-auto lg:mx-0 max-w-xl text-sm sm:text-base lg:text-lg text-emerald-100/90 font-medium leading-relaxed drop-shadow">
+              <p className="mx-auto lg:mx-0 max-w-lg text-sm sm:text-base lg:text-lg text-emerald-100/90 font-medium leading-relaxed drop-shadow">
                 Nabungin memisahkan pos tabungan Anda per target impian. Dana tidak lagi tercampur,
                 progres terlihat jelas, dan saldo selalu sinkron otomatis dari database.
               </p>
 
               {/* CTA Buttons (Focuslab Pill Style) */}
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 pt-2">
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-2">
                 <Link
                   href="/register"
-                  className="inline-flex w-full sm:w-auto items-center justify-center gap-3 rounded-full bg-white px-8 py-3.5 sm:py-4 text-sm sm:text-base font-extrabold text-[#022C22] shadow-xl shadow-black/30 transition-all hover:bg-emerald-50 hover:scale-[1.02] active:scale-[0.98]"
+                  className="inline-flex w-full sm:w-auto items-center justify-center gap-2.5 rounded-full bg-white px-7 py-3.5 text-sm sm:text-base font-extrabold text-[#022C22] shadow-xl shadow-black/30 transition-all hover:bg-emerald-50 hover:scale-[1.02] active:scale-[0.98]"
                 >
                   <span>Mulai Menabung Sekarang</span>
                   <span className="flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-emerald-600 text-white text-xs font-black">
@@ -87,7 +93,7 @@ export default async function HomePage() {
                 </Link>
                 <a
                   href="#demo"
-                  className="inline-flex w-full sm:w-auto items-center justify-center rounded-full border border-white/30 bg-white/10 px-8 py-3.5 sm:py-4 text-sm sm:text-base font-bold text-white backdrop-blur-md shadow-sm transition-all hover:bg-white/20 hover:border-white/50 active:scale-[0.98]"
+                  className="inline-flex w-full sm:w-auto items-center justify-center rounded-full border border-white/30 bg-white/10 px-6 py-3.5 text-sm sm:text-base font-bold text-white backdrop-blur-md shadow-sm transition-all hover:bg-white/20 hover:border-white/50 active:scale-[0.98]"
                 >
                   Coba Simulator Langsung
                 </a>
