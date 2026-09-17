@@ -24,6 +24,9 @@ export interface CreateTransactionDialogProps {
   onClose: () => void
   defaultType?: TransactionType
   defaultGoalId?: string
+  defaultCategoryId?: string
+  defaultAmount?: number
+  defaultNotes?: string
   onSuccess?: (transaction: Transaction) => void
 }
 
@@ -32,15 +35,20 @@ export function CreateTransactionDialog({
   onClose,
   defaultType = 'deposit',
   defaultGoalId,
+  defaultCategoryId,
+  defaultAmount,
+  defaultNotes,
   onSuccess,
 }: CreateTransactionDialogProps) {
   const { activeGroupId, activeGroup, triggerRefresh } = useWorkspace()
 
   const [type, setType] = React.useState<TransactionType>(defaultType)
   const [goalId, setGoalId] = React.useState(defaultGoalId || '')
-  const [categoryId, setCategoryId] = React.useState('')
-  const [amountRaw, setAmountRaw] = React.useState('')
-  const [notes, setNotes] = React.useState('')
+  const [categoryId, setCategoryId] = React.useState(defaultCategoryId || '')
+  const [amountRaw, setAmountRaw] = React.useState(
+    defaultAmount ? defaultAmount.toString() : ''
+  )
+  const [notes, setNotes] = React.useState(defaultNotes || '')
   const [txDate, setTxDate] = React.useState(
     new Date().toISOString().split('T')[0]
   )
@@ -55,6 +63,9 @@ export function CreateTransactionDialog({
     if (isOpen && activeGroupId) {
       setType(defaultType)
       if (defaultGoalId) setGoalId(defaultGoalId)
+      if (defaultCategoryId) setCategoryId(defaultCategoryId)
+      if (defaultAmount) setAmountRaw(defaultAmount.toString())
+      if (defaultNotes) setNotes(defaultNotes)
 
       Promise.all([
         getGoalsByWorkspace(activeGroupId),
@@ -65,12 +76,20 @@ export function CreateTransactionDialog({
         if (!defaultGoalId && goalsData.length > 0) {
           setGoalId(goalsData[0].id)
         }
-        if (catsData.length > 0) {
+        if (!defaultCategoryId && catsData.length > 0) {
           setCategoryId(catsData[0].id)
         }
       })
     }
-  }, [isOpen, activeGroupId, defaultType, defaultGoalId])
+  }, [
+    isOpen,
+    activeGroupId,
+    defaultType,
+    defaultGoalId,
+    defaultCategoryId,
+    defaultAmount,
+    defaultNotes,
+  ])
 
   const numericAmount = React.useMemo(() => {
     const clean = amountRaw.replace(/\D/g, '')

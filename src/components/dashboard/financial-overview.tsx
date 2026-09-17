@@ -10,6 +10,8 @@ import {
   ArrowRight,
   TrendingUp,
   Clock,
+  Sparkles,
+  Zap,
 } from 'lucide-react'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -17,6 +19,7 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Progress } from '@/components/ui/progress'
 import { CreateTransactionDialog } from '@/components/transactions/create-transaction-dialog'
+import { SmartQuickAddModal } from '@/components/transactions/smart-quick-add-modal'
 import { useWorkspace } from '@/components/groups/workspace-context'
 import { getGoalsByWorkspace } from '@/actions/goals'
 import {
@@ -35,6 +38,14 @@ export function FinancialOverview() {
 
   // Dialog State
   const [isDialogOpen, setIsDialogOpen] = React.useState(false)
+  const [isAiQuickAddOpen, setIsAiQuickAddOpen] = React.useState(false)
+  const [fullFormPrefill, setFullFormPrefill] = React.useState<{
+    type: TransactionType
+    goalId: string
+    categoryId: string
+    amount: number
+    notes: string
+  } | null>(null)
   const [dialogType, setDialogType] = React.useState<TransactionType>('deposit')
   const [refreshTrigger, setRefreshTrigger] = React.useState(0)
 
@@ -150,7 +161,18 @@ export function FinancialOverview() {
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+            <Button
+              variant="outline"
+              size="md"
+              onClick={() => setIsAiQuickAddOpen(true)}
+              className="flex-1 sm:flex-initial min-h-[44px] border-emerald-500/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 hover:text-white shadow-sm transition-all"
+              title="Catat transaksi cepat dengan kalimat santai bertenaga AI"
+            >
+              <Sparkles className="h-4 w-4 mr-1.5 text-amber-400" />
+              <span>⚡ Quick-Add AI</span>
+            </Button>
+
             <Button
               variant="deposit"
               size="md"
@@ -158,7 +180,7 @@ export function FinancialOverview() {
               className="flex-1 sm:flex-initial min-h-[44px]"
             >
               <ArrowDownLeft className="h-4 w-4 mr-1" />
-              <span>+ Setor (Deposit)</span>
+              <span>+ Setor</span>
             </Button>
 
             <Button
@@ -168,7 +190,7 @@ export function FinancialOverview() {
               className="flex-1 sm:flex-initial min-h-[44px]"
             >
               <ArrowUpRight className="h-4 w-4 mr-1" />
-              <span>- Tarik (Withdraw)</span>
+              <span>- Tarik</span>
             </Button>
           </div>
         </div>
@@ -356,11 +378,30 @@ export function FinancialOverview() {
         )}
       </div>
 
-      {/* Modal Dialog Transaksi */}
+      {/* Modal Smart Quick-Add AI */}
+      <SmartQuickAddModal
+        isOpen={isAiQuickAddOpen}
+        onClose={() => setIsAiQuickAddOpen(false)}
+        onSuccess={() => setRefreshTrigger((c) => c + 1)}
+        onOpenFullForm={(prefilled) => {
+          setFullFormPrefill(prefilled)
+          setDialogType(prefilled.type)
+          setIsDialogOpen(true)
+        }}
+      />
+
+      {/* Modal Dialog Transaksi Standar */}
       <CreateTransactionDialog
         isOpen={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
+        onClose={() => {
+          setIsDialogOpen(false)
+          setFullFormPrefill(null)
+        }}
         defaultType={dialogType}
+        defaultGoalId={fullFormPrefill?.goalId}
+        defaultCategoryId={fullFormPrefill?.categoryId}
+        defaultAmount={fullFormPrefill?.amount}
+        defaultNotes={fullFormPrefill?.notes}
         onSuccess={() => setRefreshTrigger((c) => c + 1)}
       />
     </div>
