@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge'
 import { ShieldCheck, Calendar } from 'lucide-react'
 import { ActiveWorkspaceSummary } from '@/components/groups/active-workspace-summary'
 import { FinancialOverview } from '@/components/dashboard/financial-overview'
+import { AiAdvisorCard } from '@/components/dashboard/ai-advisor-card'
 import { AnalyticsSection } from '@/components/analytics/analytics-section'
 import { GoalList } from '@/components/goals/goal-list'
 
@@ -59,6 +60,9 @@ export default async function DashboardPage() {
 
       {/* 3. Financial Overview Terkoneksi Ledger (Hero, Metrics, Trends, Recent Tx) */}
       <FinancialOverview />
+
+      {/* 3.5. AI Financial Advisor Snapshot Card */}
+      <AiAdvisorCard />
 
       {/* 4. Analitik, Tren Bulanan, Kontribusi & Proyeksi Finansial */}
       <AnalyticsSection />

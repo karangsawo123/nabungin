@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Sidebar } from '@/components/layout/sidebar'
 import { Topbar } from '@/components/layout/topbar'
 import { MobileNav } from '@/components/layout/mobile-nav'
+import { AiAdvisorDrawer } from '@/components/ai/ai-advisor-drawer'
 import { WorkspaceProvider, type WorkspaceMembership } from '@/components/groups/workspace-context'
 
 export default async function DashboardLayout({
@@ -75,6 +76,9 @@ export default async function DashboardLayout({
 
         {/* Mobile Bottom Navigation Bar */}
         <MobileNav />
+
+        {/* Floating Global AI Financial Advisor Drawer */}
+        <AiAdvisorDrawer />
       </div>
     </WorkspaceProvider>
   )
