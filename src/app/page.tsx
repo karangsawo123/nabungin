@@ -37,66 +37,73 @@ export default async function HomePage() {
       <LandingNavbar />
 
       <main className="flex-1">
-        {/* Hero Section */}
-        <section className="relative overflow-hidden px-4 pb-12 pt-14 sm:px-6 sm:pt-20 md:pb-16 text-center">
-          {/* Ambient Warm & Growth Glows */}
-          <div className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 h-96 w-[700px] rounded-full bg-emerald-500/10 blur-[130px]" />
-          <div className="pointer-events-none absolute right-1/4 top-20 h-64 w-64 rounded-full bg-amber-400/10 blur-[100px]" />
+        {/* Hero Section with 3D Full Image Background */}
+        <section className="relative overflow-hidden bg-[#021F17] text-white min-h-[92vh] sm:min-h-screen flex flex-col justify-between pt-8 pb-8 sm:pt-14 sm:pb-16">
+          {/* Full-bleed 3D Background Image */}
+          <div
+            className="absolute inset-0 bg-cover bg-bottom bg-no-repeat pointer-events-none opacity-95"
+            style={{ backgroundImage: "url('/hero-bg.jpg')" }}
+          />
 
-          <div className="relative mx-auto max-w-4xl space-y-6">
-            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-600/25 bg-emerald-50/90 px-4 py-1.5 text-xs font-bold text-emerald-800 shadow-2xs">
-              <ShieldCheck className="h-4 w-4 text-emerald-600" />
+          {/* Vignette & Contrast Overlays for Supreme Text Legibility */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#021F17]/90 via-[#021F17]/35 to-transparent pointer-events-none" />
+          <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-[850px] h-[450px] bg-emerald-500/15 rounded-full blur-[140px]" />
+
+          {/* Hero Content (Cleanly placed in the upper negative space) */}
+          <div className="relative z-10 mx-auto max-w-3xl px-4 sm:px-6 text-center space-y-4 sm:space-y-6">
+            {/* Frosted Pill Badge */}
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-950/70 backdrop-blur-md px-3.5 py-1 text-xs font-bold text-emerald-300 shadow-md">
+              <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
               <span>Gratis seumur hidup, tanpa biaya langganan</span>
             </div>
 
-            <h1 className="text-4xl font-black tracking-tight text-slate-900 sm:text-6xl md:text-7xl leading-[1.12]">
+            {/* Headline */}
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-white leading-[1.15] drop-shadow-md">
               Wujudkan Target Finansial,{' '}
-              <span className="bg-gradient-to-r from-emerald-600 via-teal-600 to-amber-600 bg-clip-text text-transparent">
+              <br className="hidden sm:inline" />
+              <span className="bg-gradient-to-r from-emerald-400 via-teal-300 to-amber-400 bg-clip-text text-transparent">
                 Sendiri Maupun Bersama
               </span>
             </h1>
 
-            <p className="mx-auto max-w-2xl text-base text-slate-600 sm:text-lg font-medium leading-relaxed">
+            {/* Subtitle */}
+            <p className="mx-auto max-w-xl text-sm sm:text-base text-emerald-100/90 font-medium leading-relaxed drop-shadow">
               Nabungin memisahkan pos tabungan Anda per target impian. Dana tidak lagi tercampur,
               progres terlihat jelas, dan saldo selalu sinkron otomatis dari database.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 pt-2">
+            {/* CTA Buttons (Focuslab Pill Style) */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1">
               <Link
                 href="/register"
-                className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-emerald-600 px-7 py-3.5 text-base font-bold text-white shadow-md shadow-emerald-600/25 transition-all hover:bg-emerald-700 hover:shadow-lg hover:shadow-emerald-600/30 focus-visible:outline-2 focus-visible:outline-emerald-600 active:scale-98"
+                className="inline-flex w-full sm:w-auto items-center justify-center gap-3 rounded-full bg-white px-7 py-3 sm:py-3.5 text-sm sm:text-base font-extrabold text-[#022C22] shadow-xl shadow-black/30 transition-all hover:bg-emerald-50 hover:scale-[1.02] active:scale-[0.98]"
               >
                 <span>Mulai Menabung Sekarang</span>
-                <ArrowRight className="h-4 w-4" />
+                <span className="flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-emerald-600 text-white text-xs font-black">
+                  <ArrowRight className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                </span>
               </Link>
               <a
                 href="#demo"
-                className="inline-flex w-full sm:w-auto items-center justify-center rounded-xl border border-[#DCD5C9] bg-white px-7 py-3.5 text-base font-bold text-slate-700 shadow-xs transition-colors hover:bg-slate-50 hover:text-emerald-700 focus-visible:outline-2 focus-visible:outline-emerald-500 active:scale-98"
+                className="inline-flex w-full sm:w-auto items-center justify-center rounded-full border border-white/30 bg-white/10 px-7 py-3 sm:py-3.5 text-sm sm:text-base font-bold text-white backdrop-blur-md shadow-sm transition-all hover:bg-white/20 hover:border-white/50 active:scale-[0.98]"
               >
                 Coba Simulator Langsung
               </a>
             </div>
+          </div>
 
-            {/* Trust Pills */}
-            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2.5 pt-6 text-xs text-slate-600 font-semibold">
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="h-4 w-4 text-emerald-600 flex-shrink-0" />
-                <span>Personal &amp; Shared Workspace</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="h-4 w-4 text-emerald-600 flex-shrink-0" />
-                <span>Saldo dihitung otomatis database</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="h-4 w-4 text-emerald-600 flex-shrink-0" />
-                <span>Proteksi anti-minus built-in</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="h-4 w-4 text-emerald-600 flex-shrink-0" />
-                <span>Ekspor CSV kapan saja</span>
-              </div>
+          {/* Spacer & Bottom Focuslab-Style Badge over the 3D Landscape */}
+          <div className="relative z-10 flex flex-col items-center justify-end pt-36 sm:pt-48 md:pt-64 pb-2">
+            <div className="inline-flex items-center gap-3 rounded-2xl border border-emerald-500/25 bg-[#021F17]/80 px-4 py-2 text-xs backdrop-blur-md shadow-lg text-emerald-200">
+              <CheckCircle2 className="h-4 w-4 text-emerald-400 flex-shrink-0" />
+              <span className="font-semibold text-emerald-100">
+                100% Transparan &bull; Proteksi Anti-Minus &bull; Personal &amp; Shared
+              </span>
             </div>
           </div>
+
+          {/* Ultra-soft fade into the warm cream section below */}
+          <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-t from-[#FAF8F5] to-transparent pointer-events-none" />
         </section>
 
         {/* Interactive Simulator Section */}

@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nabungin — 3 Opsi Background Gambar Hero</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: #F4EFE6;
+      color: #1E293B;
+      padding: 36px 20px 90px;
+    }
+    
+    header {
+      text-align: center;
+      max-width: 860px;
+      margin: 0 auto 36px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #D1FAE5;
+      color: #065F46;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 5px 14px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    h1 {
+      font-size: clamp(1.6rem, 3.5vw, 2.3rem);
+      font-weight: 900;
+      color: #0F172A;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
+    .subtitle {
+      color: #64748B;
+      font-size: 0.95rem;
+      font-weight: 500;
+      line-height: 1.6;
+    }
+
+    /* Interactive View Toggle */
+    .controls-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 36px;
+      flex-wrap: wrap;
+    }
+    .toggle-group {
+      display: inline-flex;
+      background: #E8E0D2;
+      padding: 4px;
+      border-radius: 12px;
+      gap: 4px;
+    }
+    .toggle-btn {
+      padding: 8px 18px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border-radius: 9px;
+      border: none;
+      cursor: pointer;
+      background: transparent;
+      color: #64748B;
+      transition: all 0.2s ease;
+    }
+    .toggle-btn.active {
+      background: #FFFFFF;
+      color: #065F46;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    /* Cards Grid */
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+      gap: 32px;
+      max-width: 1240px;
+      margin: 0 auto 60px;
+    }
+    .option-card {
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1.5px solid #E2D9CB;
+      background: #FFFFFF;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .option-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 45px rgba(0,0,0,0.12);
+    }
+    
+    .card-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #F0EAE1;
+      background: #FAF8F5;
+    }
+    .card-title {
+      font-weight: 800;
+      font-size: 1.02rem;
+      color: #0F172A;
+    }
+    .card-tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #10B981;
+      background: #ECFDF5;
+      padding: 4px 10px;
+      border-radius: 99px;
+      border: 1px solid #A7F3D0;
+    }
+
+    /* Hero Preview Container */
+    .preview-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 9/16;
+      background: #022C22;
+      overflow: hidden;
+    }
+    .preview-container svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Mockup Text Overlay (Focuslab style) */
+    .mockup-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 24px 20px;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      background: linear-gradient(180deg, rgba(2, 44, 34, 0.4) 0%, rgba(2, 44, 34, 0) 35%, rgba(2, 44, 34, 0.5) 100%);
+    }
+    .mockup-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .mock-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .mock-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #FFFFFF;
+      font-weight: 800;
+      font-size: 0.95rem;
+      letter-spacing: -0.01em;
+    }
+    .mock-logo-dot {
+      width: 24px;
+      height: 24px;
+      border-radius: 8px;
+      background: #10B981;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+    .mock-menu-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+
+    .mock-content {
+      margin-top: 24px;
+      text-align: left;
+    }
+    .mock-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(52, 211, 153, 0.4);
+      color: #A7F3D0;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 14px;
+      backdrop-filter: blur(6px);
+    }
+    .mock-headline {
+      font-size: 1.65rem;
+      font-weight: 900;
+      line-height: 1.15;
+      color: #FFFFFF;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+    .mock-headline span {
+      color: #FBBF24;
+    }
+    .mock-desc {
+      color: #E2E8F0;
+      font-size: 0.8rem;
+      line-height: 1.45;
+      font-weight: 500;
+      margin-bottom: 20px;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    }
+    .mock-cta-group {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+    .mock-btn-primary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #FFFFFF;
+      color: #064E3B;
+      font-weight: 800;
+      font-size: 0.82rem;
+      padding: 10px 18px;
+      border-radius: 999px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    }
+    .mock-btn-primary .btn-icon {
+      background: #10B981;
+      color: white;
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+    .mock-btn-secondary {
+      text-align: center;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
+      backdrop-filter: blur(8px);
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 0.8rem;
+      padding: 9px 18px;
+      border-radius: 999px;
+    }
+
+    .mock-bottom-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(6, 78, 59, 0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(52, 211, 153, 0.25);
+      border-radius: 12px;
+      padding: 8px 12px;
+    }
+    .mock-badge-num {
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: #FBBF24;
+    }
+    .mock-badge-text {
+      font-size: 0.7rem;
+      color: #E2E8F0;
+      line-height: 1.25;
+    }
+
+    /* Card Details */
+    .card-body {
+      padding: 18px 20px;
+      flex: 1;
+      background: #FFFFFF;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .desc-text {
+      font-size: 0.84rem;
+      color: #475569;
+      line-height: 1.5;
+    }
+    .desc-text strong {
+      color: #0F172A;
+    }
+    .tags-list {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .micro-tag {
+      font-size: 0.7rem;
+      background: #F1F5F9;
+      color: #475569;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .card-footer {
+      padding: 14px 20px;
+      background: #FAF8F5;
+      border-top: 1px solid #F0EAE1;
+      display: flex;
+      gap: 10px;
+    }
+    .btn-download {
+      flex: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 16px;
+      border-radius: 12px;
+      background: #10B981;
+      color: #FFFFFF;
+      font-size: 0.85rem;
+      font-weight: 800;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      box-shadow: 0 3px 10px rgba(16, 185, 129, 0.25);
+    }
+    .btn-download:hover {
+      background: #059669;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
+    }
+    .btn-download svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    /* AI Prompts Section */
+    .prompts-section {
+      max-width: 1240px;
+      margin: 0 auto;
+      background: #FFFFFF;
+      border-radius: 24px;
+      border: 1.5px solid #E2D9CB;
+      padding: 36px 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+    .prompts-section h2 {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: #0F172A;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .prompts-intro {
+      color: #64748B;
+      font-size: 0.88rem;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+    .prompt-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .prompt-box {
+      background: #FAF8F5;
+      border: 1px solid #E8E0D2;
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .prompt-box-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .prompt-title {
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: #064E3B;
+    }
+    .prompt-content {
+      background: #0F172A;
+      color: #E2E8F0;
+      padding: 14px;
+      border-radius: 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.78rem;
+      line-height: 1.55;
+      word-break: break-word;
+      max-height: 170px;
+      overflow-y: auto;
+    }
+    .btn-copy {
+      align-self: flex-start;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #FFFFFF;
+      border: 1.5px solid #D1D5DB;
+      color: #1E293B;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-copy:hover {
+      background: #F8FAFC;
+      border-color: #10B981;
+      color: #065F46;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="badge">✦ Visual Asset Nabungin</div>
+    <h1>3 Opsi Background Gambar Hero (Clean)</h1>
+    <p class="subtitle">
+      Gambar murni <strong>tanpa teks / tulisan</strong>, dirancang dengan negative space di area atas sehingga teks headline, deskripsi, dan tombol CTA website terlihat sangat jelas dan kontras tinggi seperti referensi Focuslab AI.
+    </p>
+  </header>
+
+  <!-- Interactive Controls Bar -->
+  <div class="controls-bar">
+    <div class="toggle-group">
+      <button class="toggle-btn active" id="btn-show-clean" onclick="setOverlayMode(false)">
+        🖼️ Background Murni Saja (Clean)
+      </button>
+      <button class="toggle-btn" id="btn-show-mock" onclick="setOverlayMode(true)">
+        📱 Preview dengan Teks Website (Focuslab Style)
+      </button>
+    </div>
+  </div>
+
+  <!-- Cards Grid -->
+  <div class="options-grid">
+
+    <!-- ========================================================= -->
+    <!-- OPSI 1: LADANG EMAS & PERTUMBUHAN ORGANIK                -->
+    <!-- ========================================================= -->
+    <div class="option-card">
+      <div class="card-header">
+        <span class="card-title">Opsi 1 — Sunrise Growth</span>
+        <span class="card-tag">Organik & Hangat</span>
+      </div>
+
+      <div class="preview-container">
+        <!-- PURE BACKGROUND SVG (NO TEXT) -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 800" id="svg-hero-1">
+          <defs>
+            <linearGradient id="skyGrad1" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#021C14"/>
+              <stop offset="38%" stop-color="#063E2C"/>
+              <stop offset="68%" stop-color="#0F5A41"/>
+              <stop offset="84%" stop-color="#B45309"/>
+              <stop offset="93%" stop-color="#F59E0B"/>
+              <stop offset="100%" stop-color="#FDE68A"/>
+            </linearGradient>
+
+            <radialGradient id="sunGlow1" cx="50%" cy="66%" r="28%">
+              <stop offset="0%" stop-color="#FDE68A" stop-opacity="0.95"/>
+              <stop offset="45%" stop-color="#F59E0B" stop-opacity="0.6"/>
+              <stop offset="100%" stop-color="#D97706" stop-opacity="0"/>
+            </radialGradient>
+
+            <radialGradient id="topAmbiance1" cx="50%" cy="15%" r="45%">
+              <stop offset="0%" stop-color="#10B981" stop-opacity="0.15"/>
+              <stop offset="100%" stop-color="#10B981" stop-opacity="0"/>
+            </radialGradient>
+
+            <filter id="softGlow1" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="16"/>
+            </filter>
+            <filter id="bloom1" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="6"/>
+            </filter>
+          </defs>
+
+          <!-- Sky Background -->
+          <rect width="450" height="800" fill="url(#skyGrad1)"/>
+          <ellipse cx="225" cy="120" rx="220" ry="120" fill="url(#topAmbiance1)"/>
+
+          <!-- Giant Sunrise Ambient Sun / Golden Coin Sphere on Horizon -->
+          <circle cx="225" cy="530" r="140" fill="url(#sunGlow1)" filter="url(#softGlow1)"/>
+          <circle cx="225" cy="530" r="62" fill="#FDE68A" opacity="0.95" filter="url(#bloom1)"/>
+          <circle cx="225" cy="530" r="54" fill="#FBBF24"/>
+          <circle cx="225" cy="530" r="44" fill="#FEF3C7" opacity="0.4"/>
+          
+          <!-- Sun Coin Relief Rings -->
+          <circle cx="225" cy="530" r="38" fill="none" stroke="#D97706" stroke-width="2" opacity="0.45"/>
+          <circle cx="225" cy="530" r="32" fill="none" stroke="#FDE68A" stroke-width="1.5" opacity="0.6"/>
+
+          <!-- Rolling Hills (Deep Layer 1) -->
+          <path d="M-20 590 Q80 540 180 565 Q290 590 380 550 Q430 535 470 545 L470 800 L-20 800 Z" fill="#043224" opacity="0.75"/>
+          
+          <!-- Rolling Hills (Layer 2) -->
+          <path d="M-20 635 Q90 600 200 620 Q310 640 400 605 Q440 595 470 605 L470 800 L-20 800 Z" fill="#064E3B"/>
+          
+          <!-- Rolling Hills (Layer 3) -->
+          <path d="M-20 690 Q80 665 170 675 Q280 690 370 660 Q430 645 470 660 L470 800 L-20 800 Z" fill="#065F46"/>
+
+          <!-- Foreground Hill Slope -->
+          <path d="M-20 740 Q110 715 225 725 Q350 735 470 710 L470 800 L-20 800 Z" fill="#022C22"/>
+
+          <!-- Center Sprouting Tree of Prosperity -->
+          <g transform="translate(225, 680)">
+            <!-- Stem -->
+            <path d="M0 20 Q-3 -70 -2 -140 Q-1 -190 0 -220" stroke="#34D399" stroke-width="6" fill="none" stroke-linecap="round"/>
+            <path d="M0 20 Q-3 -70 -2 -140 Q-1 -190 0 -220" stroke="#6EE7B7" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            
+            <!-- Side Branches -->
+            <path d="M-2 -80 Q-25 -110 -55 -125" stroke="#10B981" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <path d="M-1 -110 Q30 -140 60 -155" stroke="#10B981" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <path d="M-1 -150 Q-24 -175 -42 -190" stroke="#34D399" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path d="M0 -175 Q20 -195 38 -208" stroke="#34D399" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+            <!-- Leaves with Glowing Gradients -->
+            <!-- Left Leaf 1 -->
+            <g transform="translate(-55, -125) rotate(-35)">
+              <ellipse cx="0" cy="0" rx="26" ry="14" fill="#10B981"/>
+              <ellipse cx="-2" cy="-2" rx="22" ry="10" fill="#34D399" opacity="0.8"/>
+              <line x1="-20" y1="0" x2="20" y2="0" stroke="#A7F3D0" stroke-width="1.5"/>
+            </g>
+            <!-- Right Leaf 1 -->
+            <g transform="translate(60, -155) rotate(30)">
+              <ellipse cx="0" cy="0" rx="26" ry="14" fill="#34D399"/>
+              <ellipse cx="2" cy="-2" rx="22" ry="10" fill="#6EE7B7" opacity="0.8"/>
+              <line x1="-20" y1="0" x2="20" y2="0" stroke="#ECFDF5" stroke-width="1.5"/>
+            </g>
+            <!-- Left Leaf 2 -->
+            <g transform="translate(-42, -190) rotate(-45)">
+              <ellipse cx="0" cy="0" rx="20" ry="11" fill="#34D399"/>
+              <ellipse cx="-1" cy="-1" rx="16" ry="8" fill="#6EE7B7" opacity="0.85"/>
+            </g>
+            <!-- Right Leaf 2 -->
+            <g transform="translate(38, -208) rotate(40)">
+              <ellipse cx="0" cy="0" rx="20" ry="11" fill="#6EE7B7"/>
+              <ellipse cx="1" cy="-1" rx="16" ry="8" fill="#A7F3D0" opacity="0.85"/>
+            </g>
+            <!-- Top Twin Sprout Leaves (Logo Symbolism) -->
+            <g transform="translate(-16, -232) rotate(-55)">
+              <ellipse cx="0" cy="0" rx="22" ry="12" fill="#A7F3D0"/>
+              <ellipse cx="0" cy="0" rx="18" ry="8" fill="#FFFFFF" opacity="0.6"/>
+            </g>
+            <g transform="translate(16, -232) rotate(55)">
+              <ellipse cx="0" cy="0" rx="22" ry="12" fill="#6EE7B7"/>
+              <ellipse cx="0" cy="0" rx="18" ry="8" fill="#FFFFFF" opacity="0.6"/>
+            </g>
+            <!-- Bud Light -->
+            <circle cx="0" cy="-242" r="7" fill="#FEF3C7" filter="url(#bloom1)"/>
+          </g>
+
+          <!-- Floating Golden Ambient Particles & Embers -->
+          <g opacity="0.75">
+            <circle cx="95" cy="460" r="18" fill="#FBBF24" opacity="0.6" filter="url(#bloom1)"/>
+            <circle cx="95" cy="460" r="12" fill="#FEF3C7"/>
+            <circle cx="360" cy="420" r="14" fill="#F59E0B" opacity="0.7" filter="url(#bloom1)"/>
+            <circle cx="360" cy="420" r="8" fill="#FEF3C7"/>
+            <circle cx="160" cy="380" r="8" fill="#FBBF24" opacity="0.8"/>
+            <circle cx="310" cy="490" r="10" fill="#F59E0B" opacity="0.7"/>
+            <!-- Sparkles -->
+            <circle cx="80" cy="220" r="2.5" fill="#FDE68A" opacity="0.8"/>
+            <circle cx="370" cy="180" r="3" fill="#FDE68A" opacity="0.7"/>
+            <circle cx="140" cy="290" r="2" fill="#A7F3D0" opacity="0.6"/>
+            <circle cx="320" cy="280" r="2" fill="#A7F3D0" opacity="0.6"/>
+            <circle cx="210" cy="200" r="2.5" fill="#FDE68A" opacity="0.5"/>
+          </g>
+        </svg>
+
+        <!-- MOCKUP TEXT OVERLAY -->
+        <div class="mockup-overlay" id="mock-overlay-1">
+          <div class="mock-top">
+            <div class="mock-brand">
+              <div class="mock-logo-dot">🌱</div>
+              <span>Nabungin</span>
+            </div>
+            <div class="mock-menu-btn">☰</div>
+          </div>
+
+          <div class="mock-content">
+            <div class="mock-pill">✦ Platform Tabungan Kolaboratif</div>
+            <h2 class="mock-headline">
+              Wujudkan Target,<br/>
+              <span>Tumbuh</span> Bersama.
+            </h2>
+            <p class="mock-desc">
+              Catat tabungan pribadi dan grup secara transparan, otomatis, dan tanpa biaya langganan seumur hidup.
+            </p>
+            <div class="mock-cta-group">
+              <div class="mock-btn-primary">
+                <span>Mulai Menabung Sekarang</span>
+                <span class="btn-icon">↗</span>
+              </div>
+              <div class="mock-btn-secondary">Lihat Demo Interaktif</div>
+            </div>
+          </div>
+
+          <div class="mock-bottom-badge">
+            <span class="mock-badge-num">100%</span>
+            <span class="mock-badge-text">Transparan & Terpisah antar pos tabungan</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <p class="desc-text">
+          <strong>Sunrise Growth</strong> — Lanskap fajar hangat bernuansa Deep Emerald & Golden Amber. Cahaya matahari koin emas di cakrawala dengan pohon tunas hijau yang bertumbuh di tengah.
+        </p>
+        <div class="tags-list">
+          <span class="micro-tag">Area Teks Luas & Kontras</span>
+          <span class="micro-tag">Hangat & Ramah</span>
+          <span class="micro-tag">Gradien Alami</span>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <button class="btn-download" onclick="downloadCleanSVG('svg-hero-1', 'nabungin-bg-sunrise-growth.svg')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          Download SVG Murni
+        </button>
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- OPSI 2: CONNECTED SYNERGY (LOGO INSPIRED MODERN 3D)       -->
+    <!-- ========================================================= -->
+    <div class="option-card">
+      <div class="card-header">
+        <span class="card-title">Opsi 2 — Connected Synergy</span>
+        <span class="card-tag">Identitas Logo</span>
+      </div>
+
+      <div class="preview-container">
+        <!-- PURE BACKGROUND SVG (NO TEXT) -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 800" id="svg-hero-2">
+          <defs>
+            <linearGradient id="bgGrad2" x1="0" y1="0" x2="0.3" y2="1">
+              <stop offset="0%" stop-color="#021E16"/>
+              <stop offset="35%" stop-color="#043224"/>
+              <stop offset="70%" stop-color="#064E3B"/>
+              <stop offset="100%" stop-color="#02231A"/>
+            </linearGradient>
+
+            <radialGradient id="emeraldAura2" cx="40%" cy="58%" r="40%">
+              <stop offset="0%" stop-color="#10B981" stop-opacity="0.35"/>
+              <stop offset="60%" stop-color="#10B981" stop-opacity="0.1"/>
+              <stop offset="100%" stop-color="#10B981" stop-opacity="0"/>
+            </radialGradient>
+
+            <radialGradient id="amberAura2" cx="68%" cy="64%" r="35%">
+              <stop offset="0%" stop-color="#F59E0B" stop-opacity="0.35"/>
+              <stop offset="55%" stop-color="#F59E0B" stop-opacity="0.1"/>
+              <stop offset="100%" stop-color="#F59E0B" stop-opacity="0"/>
+            </radialGradient>
+
+            <linearGradient id="bubbleGreen2" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#34D399"/>
+              <stop offset="40%" stop-color="#10B981"/>
+              <stop offset="100%" stop-color="#059669"/>
+            </linearGradient>
+
+            <linearGradient id="bubbleAmber2" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#FBBF24"/>
+              <stop offset="45%" stop-color="#F59E0B"/>
+              <stop offset="100%" stop-color="#D97706"/>
+            </linearGradient>
+
+            <filter id="shadow3D2" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#01140E" flood-opacity="0.6"/>
+            </filter>
+            <filter id="intenseGlow2" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur stdDeviation="12" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+
+          <!-- Studio Mood Lighting Background -->
+          <rect width="450" height="800" fill="url(#bgGrad2)"/>
+          <!-- Ambiance Orbs -->
+          <ellipse cx="180" cy="480" rx="200" ry="180" fill="url(#emeraldAura2)"/>
+          <ellipse cx="300" cy="540" rx="180" ry="160" fill="url(#amberAura2)"/>
+
+          <!-- Tech / Connection Grid Mesh (Subtle in upper area) -->
+          <g opacity="0.08" stroke="#6EE7B7" stroke-width="1">
+            <line x1="0" y1="120" x2="450" y2="120"/>
+            <line x1="0" y1="200" x2="450" y2="200"/>
+            <line x1="0" y1="280" x2="450" y2="280"/>
+            <line x1="90" y1="0" x2="90" y2="400"/>
+            <line x1="225" y1="0" x2="225" y2="400"/>
+            <line x1="360" y1="0" x2="360" y2="400"/>
+          </g>
+
+          <!-- Dynamic Connecting Lines across members (lower half) -->
+          <g opacity="0.4" stroke-linecap="round">
+            <path d="M60 520 C120 480, 150 560, 225 510" stroke="#34D399" stroke-width="2" stroke-dasharray="4,4"/>
+            <path d="M390 540 C330 500, 300 580, 225 510" stroke="#FBBF24" stroke-width="2" stroke-dasharray="4,4"/>
+            <path d="M80 660 C140 640, 180 600, 225 590" stroke="#10B981" stroke-width="2" stroke-dasharray="3,3"/>
+            <path d="M370 650 C310 630, 270 610, 225 590" stroke="#F59E0B" stroke-width="2" stroke-dasharray="3,3"/>
+          </g>
+
+          <!-- Floating Ambient Orbit Nodes -->
+          <circle cx="60" cy="520" r="16" fill="#043224" stroke="#34D399" stroke-width="2.5"/>
+          <circle cx="60" cy="520" r="6" fill="#A7F3D0"/>
+          
+          <circle cx="390" cy="540" r="16" fill="#043224" stroke="#FBBF24" stroke-width="2.5"/>
+          <circle cx="390" cy="540" r="6" fill="#FEF3C7"/>
+
+          <circle cx="80" cy="660" r="14" fill="#043224" stroke="#10B981" stroke-width="2"/>
+          <circle cx="80" cy="660" r="5" fill="#6EE7B7"/>
+
+          <circle cx="370" cy="650" r="14" fill="#043224" stroke="#F59E0B" stroke-width="2"/>
+          <circle cx="370" cy="650" r="5" fill="#FDE68A"/>
+
+          <!-- MAIN HERO VISUAL: 3D Intersecting Dialogue Bubbles with Sprout & Gold Core -->
+          <!-- Green Speech Bubble (Left, Primary) -->
+          <g filter="url(#shadow3D2)">
+            <path d="M120 420 
+                     C120 380 148 350 190 350 
+                     L270 350 
+                     C312 350 340 380 340 420 
+                     L340 500 
+                     C340 540 312 570 270 570 
+                     L225 570 
+                     L205 605 
+                     L188 570 
+                     L190 570 
+                     C148 570 120 540 120 500 Z"
+              fill="url(#bubbleGreen2)"/>
+            <!-- Bubble Highlight Rim -->
+            <path d="M130 420 C130 388 152 362 190 362 L270 362" stroke="#A7F3D0" stroke-width="3" fill="none" opacity="0.75" stroke-linecap="round"/>
+          </g>
+
+          <!-- Amber Speech Bubble (Right, Warm Partner) -->
+          <g filter="url(#shadow3D2)">
+            <path d="M195 480 
+                     C195 445 220 422 255 422 
+                     L335 422 
+                     C370 422 395 445 395 480 
+                     L395 545 
+                     C395 580 370 602 335 602 
+                     L305 602 
+                     L295 630 
+                     L282 602 
+                     L255 602 
+                     C220 602 195 580 195 545 Z"
+              fill="url(#bubbleAmber2)"/>
+            <!-- Amber Highlight Rim -->
+            <path d="M205 480 C205 455 224 434 255 434 L335 434" stroke="#FEF3C7" stroke-width="3" fill="none" opacity="0.8" stroke-linecap="round"/>
+          </g>
+
+          <!-- Glowing Coin Centerpiece inside Bubble Intersect -->
+          <g filter="url(#intenseGlow2)">
+            <circle cx="250" cy="510" r="38" fill="#FBBF24"/>
+            <circle cx="250" cy="510" r="30" fill="#FEF3C7"/>
+            <circle cx="250" cy="510" r="23" fill="#FDE68A"/>
+            <!-- Coin Emblem Ring -->
+            <circle cx="250" cy="510" r="16" fill="none" stroke="#D97706" stroke-width="2.5" opacity="0.7"/>
+          </g>
+
+          <!-- Sprouting Leaves Rising from the Collaboration Point -->
+          <g transform="translate(235, 420)">
+            <!-- Main Stem -->
+            <path d="M0 0 Q-2 -60 0 -130" stroke="#6EE7B7" stroke-width="6" fill="none" stroke-linecap="round"/>
+            <path d="M0 0 Q-2 -60 0 -130" stroke="#FFFFFF" stroke-width="2" fill="none" opacity="0.8" stroke-linecap="round"/>
+
+            <!-- Branches -->
+            <path d="M-1 -45 Q-30 -75 -60 -90" stroke="#34D399" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+            <path d="M0 -75 Q32 -105 64 -120" stroke="#34D399" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+
+            <!-- Left Big Leaf -->
+            <g transform="translate(-60, -90) rotate(-40)">
+              <ellipse cx="0" cy="0" rx="30" ry="16" fill="#10B981" filter="url(#intenseGlow2)"/>
+              <ellipse cx="0" cy="0" rx="28" ry="14" fill="#34D399"/>
+              <ellipse cx="-2" cy="-2" rx="22" ry="9" fill="#A7F3D0" opacity="0.8"/>
+            </g>
+
+            <!-- Right Big Leaf -->
+            <g transform="translate(64, -120) rotate(35)">
+              <ellipse cx="0" cy="0" rx="30" ry="16" fill="#34D399" filter="url(#intenseGlow2)"/>
+              <ellipse cx="0" cy="0" rx="28" ry="14" fill="#6EE7B7"/>
+              <ellipse cx="2" cy="-2" rx="22" ry="9" fill="#FFFFFF" opacity="0.75"/>
+            </g>
+
+            <!-- Top Crown Leaves (Exact Logo Shape) -->
+            <g transform="translate(-18, -145) rotate(-55)">
+              <ellipse cx="0" cy="0" rx="24" ry="12" fill="#A7F3D0"/>
+              <ellipse cx="0" cy="0" rx="18" ry="7" fill="#FFFFFF" opacity="0.85"/>
+            </g>
+            <g transform="translate(18, -145) rotate(50)">
+              <ellipse cx="0" cy="0" rx="24" ry="12" fill="#6EE7B7"/>
+              <ellipse cx="0" cy="0" rx="18" ry="7" fill="#FFFFFF" opacity="0.85"/>
+            </g>
+
+            <!-- Top Light Bud -->
+            <circle cx="0" cy="-155" r="9" fill="#FEF3C7" filter="url(#intenseGlow2)"/>
+          </g>
+
+          <!-- Floating Bokeh Sparks -->
+          <circle cx="100" cy="350" r="3" fill="#6EE7B7" opacity="0.7"/>
+          <circle cx="360" cy="360" r="3.5" fill="#FBBF24" opacity="0.8"/>
+          <circle cx="330" cy="260" r="2" fill="#FEF3C7" opacity="0.6"/>
+          <circle cx="120" cy="240" r="2.5" fill="#A7F3D0" opacity="0.6"/>
+        </svg>
+
+        <!-- MOCKUP TEXT OVERLAY -->
+        <div class="mockup-overlay" id="mock-overlay-2">
+          <div class="mock-top">
+            <div class="mock-brand">
+              <div class="mock-logo-dot">🤝</div>
+              <span>Nabungin</span>
+            </div>
+            <div class="mock-menu-btn">☰</div>
+          </div>
+
+          <div class="mock-content">
+            <div class="mock-pill">✦ Finansial Personal & Komunitas</div>
+            <h2 class="mock-headline">
+              Nabung Bersama,<br/>
+              <span>Tumbuh</span> Nyata.
+            </h2>
+            <p class="mock-desc">
+              Gabungkan impian bersama pasangan, keluarga, atau sahabat dengan sistem transparansi penuh.
+            </p>
+            <div class="mock-cta-group">
+              <div class="mock-btn-primary">
+                <span>Buat Tabungan Bersama</span>
+                <span class="btn-icon">↗</span>
+              </div>
+              <div class="mock-btn-secondary">Pelajari Cara Kerjanya</div>
+            </div>
+          </div>
+
+          <div class="mock-bottom-badge">
+            <span class="mock-badge-num">100%</span>
+            <span class="mock-badge-text">Dana tetap di rekening masing-masing, aman & transparan</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <p class="desc-text">
+          <strong>Connected Synergy</strong> — Mengangkat simbol logo Nabungin (bubble talk + sprout + coin) menjadi 3D glassmorphic artwork di bagian bawah, dengan rim lighting sinematik bernuansa Focuslab.
+        </p>
+        <div class="tags-list">
+          <span class="micro-tag">Selaras Logo Brand</span>
+          <span class="micro-tag">Sinematik & Modern</span>
+          <span class="micro-tag">Simbol Kolaborasi</span>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <button class="btn-download" onclick="downloadCleanSVG('svg-hero-2', 'nabungin-bg-connected-synergy.svg')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          Download SVG Murni
+        </button>
+      </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- OPSI 3: SUMMIT HORIZON (ASPIRATIONAL GOAL PEAK)           -->
+    <!-- ========================================================= -->
+    <div class="option-card">
+      <div class="card-header">
+        <span class="card-title">Opsi 3 — Summit Horizon</span>
+        <span class="card-tag">Aspirasional</span>
+      </div>
+
+      <div class="preview-container">
+        <!-- PURE BACKGROUND SVG (NO TEXT) -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 800" id="svg-hero-3">
+          <defs>
+            <linearGradient id="nightSky3" x1="0" y1="0" x2="0.2" y2="1">
+              <stop offset="0%" stop-color="#07112B"/>
+              <stop offset="35%" stop-color="#0A2244"/>
+              <stop offset="65%" stop-color="#043224"/>
+              <stop offset="100%" stop-color="#011A12"/>
+            </linearGradient>
+
+            <radialGradient id="peakRadiance3" cx="50%" cy="46%" r="28%">
+              <stop offset="0%" stop-color="#FDE68A" stop-opacity="0.95"/>
+              <stop offset="40%" stop-color="#F59E0B" stop-opacity="0.5"/>
+              <stop offset="100%" stop-color="#F59E0B" stop-opacity="0"/>
+            </radialGradient>
+
+            <radialGradient id="moonGlowLight3" cx="78%" cy="14%" r="18%">
+              <stop offset="0%" stop-color="#E0F2FE" stop-opacity="0.75"/>
+              <stop offset="100%" stop-color="#E0F2FE" stop-opacity="0"/>
+            </radialGradient>
+
+            <linearGradient id="mountainRidge3" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#143452"/>
+              <stop offset="100%" stop-color="#07192A"/>
+            </linearGradient>
+
+            <linearGradient id="mountainMid3" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#083E30"/>
+              <stop offset="100%" stop-color="#031F17"/>
+            </linearGradient>
+
+            <filter id="aurora3" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="14"/>
+            </filter>
+            <filter id="starBloom3" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="4"/>
+            </filter>
+          </defs>
+
+          <!-- Midnight Deep Sky -->
+          <rect width="450" height="800" fill="url(#nightSky3)"/>
+
+          <!-- Crescent Moon & Glow -->
+          <ellipse cx="350" cy="110" rx="90" ry="80" fill="url(#moonGlowLight3)" filter="url(#aurora3)"/>
+          <circle cx="350" cy="110" r="32" fill="#F8FAFC"/>
+          <circle cx="362" cy="102" r="26" fill="#0A2244"/> <!-- Crescent shadow -->
+
+          <!-- Starry Constellations in Upper Clear Area -->
+          <g fill="#E0F2FE">
+            <circle cx="50" cy="70" r="1.5" opacity="0.8"/>
+            <circle cx="95" cy="40" r="2" opacity="0.9"/>
+            <circle cx="160" cy="65" r="1.5" opacity="0.7"/>
+            <circle cx="210" cy="35" r="1.2" opacity="0.9"/>
+            <circle cx="280" cy="75" r="1.8" opacity="0.85"/>
+            <circle cx="120" cy="120" r="1.5" opacity="0.6"/>
+            <circle cx="420" cy="60" r="2" opacity="0.8"/>
+            <circle cx="400" cy="160" r="1.5" opacity="0.5"/>
+            <circle cx="70" cy="190" r="1.5" opacity="0.5"/>
+            <circle cx="260" cy="140" r="1.8" opacity="0.6"/>
+          </g>
+          <!-- Star Cross Flares -->
+          <g stroke="#E0F2FE" stroke-width="1.2" opacity="0.85">
+            <line x1="95" y1="32" x2="95" y2="48"/><line x1="87" y1="40" x2="103" y2="40"/>
+            <line x1="280" y1="67" x2="280" y2="83"/><line x1="272" y1="75" x2="288" y2="75"/>
+          </g>
+
+          <!-- Back Mountain Range -->
+          <path d="M-20 530 L70 360 L180 470 L280 320 L400 450 L470 390 L470 800 L-20 800 Z"
+            fill="url(#mountainRidge3)" opacity="0.5"/>
+          <!-- Rim Light on Back Mountains -->
+          <path d="M-20 530 L70 360 L180 470 L280 320 L400 450 L470 390"
+            stroke="#38BDF8" stroke-width="1.5" fill="none" opacity="0.4"/>
+
+          <!-- Mid Mountain Range -->
+          <path d="M-20 600 L90 440 L170 510 L225 365 L310 490 L390 410 L470 500 L470 800 L-20 800 Z"
+            fill="url(#mountainMid3)" opacity="0.8"/>
+
+          <!-- Radiant Goal Summit Glow on Center Peak (225, 365) -->
+          <circle cx="225" cy="365" r="120" fill="url(#peakRadiance3)" filter="url(#aurora3)"/>
+
+          <!-- Foreground Mountain Massif -->
+          <path d="M-20 680 L120 540 L225 365 L330 540 L470 660 L470 800 L-20 800 Z"
+            fill="#02281D"/>
+
+          <!-- Golden Rim Lighting on the Main Summit Ridge -->
+          <path d="M120 540 L225 365 L330 540" stroke="#FDE68A" stroke-width="3" fill="none" filter="url(#starBloom3)" opacity="0.9"/>
+          <path d="M120 540 L225 365 L330 540" stroke="#F59E0B" stroke-width="1.5" fill="none"/>
+
+          <!-- Glowing Winding Path Ascending Mountain -->
+          <path d="M225 760 Q170 700 185 640 Q205 580 240 550 Q265 515 245 470 Q228 430 225 375"
+            stroke="#10B981" stroke-width="3.5" stroke-dasharray="7,6" fill="none" stroke-linecap="round"/>
+          <path d="M225 760 Q170 700 185 640 Q205 580 240 550 Q265 515 245 470 Q228 430 225 375"
+            stroke="#6EE7B7" stroke-width="1.5" stroke-dasharray="7,6" fill="none" stroke-linecap="round"/>
+
+          <!-- Milestone Luminous Dots on Trail -->
+          <circle cx="185" cy="640" r="7" fill="#34D399" filter="url(#starBloom3)"/>
+          <circle cx="185" cy="640" r="4" fill="#FFFFFF"/>
+
+          <circle cx="240" cy="550" r="7" fill="#6EE7B7" filter="url(#starBloom3)"/>
+          <circle cx="240" cy="550" r="4" fill="#FFFFFF"/>
+
+          <circle cx="245" cy="470" r="8" fill="#FBBF24" filter="url(#starBloom3)"/>
+          <circle cx="245" cy="470" r="4" fill="#FEF3C7"/>
+
+          <!-- Summit Treasure Coin Beacon at Peak -->
+          <g filter="url(#starBloom3)">
+            <circle cx="225" cy="365" r="32" fill="#FBBF24"/>
+            <circle cx="225" cy="365" r="25" fill="#FEF3C7"/>
+            <circle cx="225" cy="365" r="18" fill="#FDE68A"/>
+            <!-- Coin Ring -->
+            <circle cx="225" cy="365" r="13" fill="none" stroke="#D97706" stroke-width="2"/>
+          </g>
+
+          <!-- Golden Sprout Growing from Peak Coin -->
+          <path d="M225 340 L225 300" stroke="#6EE7B7" stroke-width="4" stroke-linecap="round"/>
+          <ellipse cx="205" cy="300" rx="18" ry="10" fill="#34D399" transform="rotate(-35 205 300)"/>
+          <ellipse cx="245" cy="295" rx="18" ry="10" fill="#6EE7B7" transform="rotate(30 245 295)"/>
+          <circle cx="225" cy="290" r="6" fill="#FEF3C7" filter="url(#starBloom3)"/>
+
+          <!-- Floating Firefly Sparks -->
+          <circle cx="80" cy="450" r="2.5" fill="#34D399" opacity="0.8"/>
+          <circle cx="370" cy="480" r="2.5" fill="#FBBF24" opacity="0.8"/>
+          <circle cx="150" cy="380" r="2" fill="#FEF3C7" opacity="0.7"/>
+          <circle cx="300" cy="380" r="2" fill="#6EE7B7" opacity="0.7"/>
+        </svg>
+
+        <!-- MOCKUP TEXT OVERLAY -->
+        <div class="mockup-overlay" id="mock-overlay-3">
+          <div class="mock-top">
+            <div class="mock-brand">
+              <div class="mock-logo-dot">⛰️</div>
+              <span>Nabungin</span>
+            </div>
+            <div class="mock-menu-btn">☰</div>
+          </div>
+
+          <div class="mock-content">
+            <div class="mock-pill">✦ Perjalanan Target Finansial</div>
+            <h2 class="mock-headline">
+              Capai Puncak<br/>
+              <span>Impianmu</span> Nyata.
+            </h2>
+            <p class="mock-desc">
+              Tiap setoran adalah satu langkah lebih dekat. Pantau tonggak pencapaian secara visual dan terukur.
+            </p>
+            <div class="mock-cta-group">
+              <div class="mock-btn-primary">
+                <span>Mulai Target Finansial</span>
+                <span class="btn-icon">↗</span>
+              </div>
+              <div class="mock-btn-secondary">Lihat Simulasi Target</div>
+            </div>
+          </div>
+
+          <div class="mock-bottom-badge">
+            <span class="mock-badge-num">100%</span>
+            <span class="mock-badge-text">Target jelas, progres terukur, konsisten bertumbuh</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <p class="desc-text">
+          <strong>Summit Horizon</strong> — Puncak gunung malam mistis dengan jalur pendakian bercahaya hijau emerald menuju koin emas di puncak. Memberikan narasi visual perjalanan finansial yang kuat.
+        </p>
+        <div class="tags-list">
+          <span class="micro-tag">Aspirasional & Epik</span>
+          <span class="micro-tag">Metafora Perjalanan</span>
+          <span class="micro-tag">Cahaya Malam Mewah</span>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <button class="btn-download" onclick="downloadCleanSVG('svg-hero-3', 'nabungin-bg-summit-horizon.svg')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          Download SVG Murni
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /options-grid -->
+
+  <!-- ========================================================= -->
+  <!-- AI IMAGE GENERATION PROMPTS (MIDJOURNEY / FLUX / DALL-E) -->
+  <!-- ========================================================= -->
+  <div class="prompts-section">
+    <h2>✨ Prompt AI Image Generator (Midjourney / Flux / DALL-E)</h2>
+    <p class="prompts-intro">
+      Jika ingin menghasilkan background gambar 3D / fotografi fotorealistik beresolusi ultra-tinggi menggunakan AI seperti Midjourney, ChatGPT Plus (DALL-E 3), atau Flux Pro, gunakan salah satu prompt siap pakai berikut. Format sudah dioptimalkan dengan negative space luas di bagian atas untuk teks website.
+    </p>
+
+    <div class="prompt-cards-grid">
+
+      <!-- PROMPT 1 -->
+      <div class="prompt-box">
+        <div class="prompt-box-header">
+          <span class="prompt-title">Prompt Opsi 1 — Sunrise Growth</span>
+        </div>
+        <div class="prompt-content" id="prompt-text-1">A cinematic, atmospheric vertical hero background for a modern financial fintech website. Deep emerald green and night forest gradient at the top transitioning into a soft warm golden amber sunrise at the horizon. In the lower third, lush rolling stylized green hills with glowing organic golden coins rising like a sun and soft glowing green sprouts growing upwards. Atmospheric studio rim lighting, luminous floating amber embers, volumetric fog, ethereal bokeh. Plenty of dark, clean negative space in the upper half for clean white text overlay. Minimalist, premium, 8k render, Unreal Engine 5 aesthetic, clean composition --ar 9:16 --v 6.1 --stylize 250</div>
+        <button class="btn-copy" onclick="copyPrompt('prompt-text-1', this)">📋 Salin Prompt</button>
+      </div>
+
+      <!-- PROMPT 2 -->
+      <div class="prompt-box">
+        <div class="prompt-box-header">
+          <span class="prompt-title">Prompt Opsi 2 — Connected Synergy (Focuslab Style)</span>
+        </div>
+        <div class="prompt-content" id="prompt-text-2">A sleek dark vertical web hero background inspired by Focuslab AI aesthetic. Deep dark forest green (#022C22) studio mood lighting with dramatic emerald green (#10B981) and warm amber (#F59E0B) rim lighting. In the lower third, abstract 3D frosted glassmorphic dialogue speech bubbles interlocking with each other, with a vibrant glowing gold coin nestled at the center and delicate translucent glowing botanical leaves sprouting upward. Subtle glowing constellation data lines connecting floating nodes. Upper 60 percent is clean, dark, and open negative space with soft atmospheric vignetting for text and buttons. Ultra high-end, premium tech aesthetic, Octane render --ar 9:16 --v 6.1 --stylize 300</div>
+        <button class="btn-copy" onclick="copyPrompt('prompt-text-2', this)">📋 Salin Prompt</button>
+      </div>
+
+      <!-- PROMPT 3 -->
+      <div class="prompt-box">
+        <div class="prompt-box-header">
+          <span class="prompt-title">Prompt Opsi 3 — Summit Horizon</span>
+        </div>
+        <div class="prompt-content" id="prompt-text-3">A breathtaking vertical panoramic hero background of a majestic mountain peak under a midnight navy and dark teal sky with subtle crescent moon and star dust. In the lower half, dramatic layered mountain ridges with glowing golden amber rim lighting along the crests. A winding, luminous emerald green trail ascends gracefully towards a radiant golden beacon and coin halo at the summit. Clean, empty, atmospheric deep dark sky in the top half specifically crafted for high-contrast white web typography. Epic, inspirational, cinematic lighting, photorealistic 3D matte painting, 8k, serene atmosphere --ar 9:16 --v 6.1 --stylize 250</div>
+        <button class="btn-copy" onclick="copyPrompt('prompt-text-3', this)">📋 Salin Prompt</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Toggle Mockup Overlay vs Clean Background
+    function setOverlayMode(showMockup) {
+      const overlays = document.querySelectorAll('.mockup-overlay');
+      overlays.forEach(el => {
+        if (showMockup) {
+          el.classList.remove('hidden');
+        } else {
+          el.classList.add('hidden');
+        }
+      });
+      document.getElementById('btn-show-clean').classList.toggle('active', !showMockup);
+      document.getElementById('btn-show-mock').classList.toggle('active', showMockup);
+    }
+
+    // Download Pure Clean SVG without any text
+    function downloadCleanSVG(svgId, filename) {
+      const svgEl = document.getElementById(svgId);
+      const svgData = new XMLSerializer().serializeToString(svgEl);
+      const blob = new Blob([
+        '<?xml version="1.0" encoding="UTF-8"?>\n' + svgData
+      ], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // Copy Prompt to Clipboard
+    function copyPrompt(elementId, btn) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '✅ Tersalin!';
+        btn.style.borderColor = '#10B981';
+        btn.style.color = '#065F46';
+        setTimeout(() => {
+          btn.innerHTML = orig;
+          btn.style.borderColor = '';
+          btn.style.color = '';
+        }, 2000);
+      });
+    }
+
+    // Start with Clean mode active by default
+    setOverlayMode(false);
+  </script>
+
+</body>
+</html>
