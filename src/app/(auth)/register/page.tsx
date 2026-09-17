@@ -4,8 +4,9 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { UserPlus, Loader2, ArrowRight, CheckCircle2, ShieldCheck } from 'lucide-react'
+import { UserPlus, Loader2, ArrowRight, CheckCircle2, ShieldCheck, ArrowLeft, Sparkles } from 'lucide-react'
 import { formatAuthIdentifier, validateUsername } from '@/lib/auth-helpers'
+import { Logo } from '@/components/brand/logo'
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -106,6 +107,20 @@ export default function RegisterPage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-[#0B0F19] px-4 py-12 text-slate-100 sm:px-6 lg:px-8">
+      {/* Navigation to Landing Page Header */}
+      <div className="w-full max-w-md mb-5 flex items-center justify-between">
+        <Link
+          href="/"
+          className="group inline-flex items-center gap-2 rounded-full border border-slate-800 bg-[#111827]/90 px-4 py-2 text-xs font-bold text-slate-300 shadow-sm backdrop-blur-md transition-all hover:border-emerald-500/40 hover:bg-slate-800 hover:text-white"
+          title="Kembali ke Landing Page Nabungin"
+        >
+          <ArrowLeft className="h-3.5 w-3.5 text-emerald-400 transition-transform group-hover:-translate-x-1" />
+          <span>Lihat Landing Page</span>
+        </Link>
+
+        <Logo variant="horizontal" size="sm" withLink />
+      </div>
+
       <div className="w-full max-w-md space-y-8 rounded-2xl border border-slate-800 bg-[#111827] p-8 shadow-2xl shadow-emerald-950/20">
         <div className="text-center">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
@@ -261,14 +276,28 @@ export default function RegisterPage() {
               </button>
             </form>
 
-            <div className="text-center text-sm text-slate-400">
-              Sudah punya akun?{' '}
-              <Link
-                href="/login"
-                className="font-medium text-emerald-400 hover:text-emerald-300 underline underline-offset-4"
-              >
-                Masuk di sini
-              </Link>
+            <div className="space-y-3 pt-2 text-center text-sm text-slate-400">
+              <div>
+                Sudah punya akun?{' '}
+                <Link
+                  href="/login"
+                  className="font-medium text-emerald-400 hover:text-emerald-300 underline underline-offset-4"
+                >
+                  Masuk di sini
+                </Link>
+              </div>
+
+              {/* Secondary Landing Page Link */}
+              <div className="border-t border-slate-800/80 pt-4">
+                <Link
+                  href="/"
+                  className="group inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-emerald-300 transition-colors"
+                >
+                  <Sparkles className="h-3.5 w-3.5 text-amber-400" />
+                  <span>Mau coba simulator target finansial?</span>
+                  <span className="text-emerald-400 group-hover:underline">Buka Landing Page →</span>
+                </Link>
+              </div>
             </div>
           </>
         )}
