@@ -1,17 +1,19 @@
 'use client'
 
 import * as React from 'react'
-import { UserPlus, Info } from 'lucide-react'
+import { UserPlus, Info, Trash2, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { MemberList } from '@/components/collaboration/member-list'
 import { InviteMemberDialog } from '@/components/collaboration/invite-member-dialog'
+import { DeleteWorkspaceDialog } from '@/components/groups/delete-workspace-dialog'
 import { ActivityTimeline } from '@/components/activity/activity-timeline'
 import { useWorkspace } from '@/components/groups/workspace-context'
 
 export default function GroupsPage() {
   const { activeGroup, activeRole, isOwner, isPersonal } = useWorkspace()
   const [isInviteOpen, setIsInviteOpen] = React.useState(false)
+  const [isDeleteOpen, setIsDeleteOpen] = React.useState(false)
 
   return (
     <div className="space-y-6">
@@ -84,11 +86,53 @@ export default function GroupsPage() {
         </div>
       )}
 
+      {/* 5. Zona Berbahaya (Danger Zone) khusus Owner Shared Workspace */}
+      {isOwner && !isPersonal && activeGroup && (
+        <div className="rounded-2xl border border-rose-500/20 bg-rose-500/5 p-5 sm:p-6 transition-all">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 text-rose-400 font-semibold text-xs uppercase tracking-wider">
+                <AlertTriangle className="h-4 w-4" />
+                <span>Zona Berbahaya</span>
+              </div>
+              <h3 className="text-base font-semibold text-white">
+                Hapus Ruang Tabungan Ini
+              </h3>
+              <p className="text-xs text-slate-400 max-w-xl leading-relaxed">
+                Menghapus ruang tabungan akan menghapus seluruh target, catatan mutasi transaksi, kategori, dan hak akses seluruh anggota secara permanen. Tindakan ini tidak dapat dibatalkan.
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="destructive"
+              size="md"
+              onClick={() => setIsDeleteOpen(true)}
+              className="shrink-0 min-h-[44px]"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              <span>Hapus Ruang Tabungan</span>
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Modal Dialog Undang Anggota */}
       <InviteMemberDialog
         isOpen={isInviteOpen}
         onClose={() => setIsInviteOpen(false)}
       />
+
+      {/* Modal Dialog Hapus Workspace */}
+      {activeGroup && (
+        <DeleteWorkspaceDialog
+          isOpen={isDeleteOpen}
+          onClose={() => setIsDeleteOpen(false)}
+          workspace={{
+            id: activeGroup.id,
+            name: activeGroup.name,
+          }}
+        />
+      )}
     </div>
   )
 }

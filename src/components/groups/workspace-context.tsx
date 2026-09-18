@@ -22,6 +22,7 @@ interface WorkspaceContextValue {
   triggerRefresh: () => void
   setActiveWorkspaceId: (groupId: string) => Promise<void>
   addWorkspace: (group: Group, role: MemberRole) => void
+  removeWorkspace: (groupId: string, fallbackGroupId?: string) => void
 }
 
 const WorkspaceContext = React.createContext<WorkspaceContextValue | undefined>(
@@ -96,11 +97,6 @@ export function WorkspaceProvider({
     [memberships, router]
   )
 
-  const addWorkspace = React.useCallback((group: Group, role: MemberRole) => {
-    setMemberships((prev) => [...prev, { role, groups: group }])
-    setActiveGroupIdState(group.id)
-  }, [])
-
   const triggerRefresh = React.useCallback(() => {
     setRefreshKey((k) => k + 1)
     if (typeof window !== 'undefined') {
@@ -108,6 +104,35 @@ export function WorkspaceProvider({
     }
     router.refresh()
   }, [router])
+
+  const addWorkspace = React.useCallback((group: Group, role: MemberRole) => {
+    setMemberships((prev) => [...prev, { role, groups: group }])
+    setActiveGroupIdState(group.id)
+  }, [])
+
+  const removeWorkspace = React.useCallback(
+    (deletedGroupId: string, fallbackGroupId?: string) => {
+      setMemberships((prev) => prev.filter((m) => m.groups?.id !== deletedGroupId))
+
+      if (activeGroupId === deletedGroupId) {
+        const nextTargetId =
+          fallbackGroupId ||
+          memberships.find(
+            (m) => m.groups?.id !== deletedGroupId && m.groups?.type === 'personal'
+          )?.groups?.id ||
+          memberships.find((m) => m.groups?.id !== deletedGroupId)?.groups?.id ||
+          ''
+
+        if (nextTargetId) {
+          setActiveGroupIdState(nextTargetId)
+          document.cookie = `active_workspace_id=${nextTargetId}; path=/; max-age=31536000; SameSite=Lax`
+        }
+      }
+
+      triggerRefresh()
+    },
+    [activeGroupId, memberships, triggerRefresh]
+  )
 
   // Realtime synchronization untuk active workspace
   React.useEffect(() => {
@@ -159,6 +184,7 @@ export function WorkspaceProvider({
       triggerRefresh,
       setActiveWorkspaceId,
       addWorkspace,
+      removeWorkspace,
     }),
     [
       memberships,
@@ -171,6 +197,7 @@ export function WorkspaceProvider({
       triggerRefresh,
       setActiveWorkspaceId,
       addWorkspace,
+      removeWorkspace,
     ]
   )
 

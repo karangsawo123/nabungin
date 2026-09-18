@@ -1,10 +1,11 @@
 'use client'
 
 import * as React from 'react'
-import { ChevronDown, Check, Plus, Users, User } from 'lucide-react'
+import { ChevronDown, Check, Plus, Users, User, Trash2 } from 'lucide-react'
 import { Dropdown, DropdownItem, DropdownDivider } from '@/components/ui/dropdown'
 import { Badge } from '@/components/ui/badge'
 import { CreateWorkspaceDialog } from '@/components/groups/create-workspace-dialog'
+import { DeleteWorkspaceDialog } from '@/components/groups/delete-workspace-dialog'
 import { useWorkspace } from '@/components/groups/workspace-context'
 
 export function WorkspaceSwitcher() {
@@ -16,6 +17,10 @@ export function WorkspaceSwitcher() {
   } = useWorkspace()
 
   const [isDialogOpen, setIsDialogOpen] = React.useState(false)
+  const [workspaceToDelete, setWorkspaceToDelete] = React.useState<{
+    id: string
+    name: string
+  } | null>(null)
 
   return (
     <>
@@ -95,6 +100,23 @@ export function WorkspaceSwitcher() {
                   {isSelected && (
                     <Check className="h-3.5 w-3.5 text-emerald-400 ml-0.5" />
                   )}
+                  {m.groups.type === 'shared' && m.role === 'owner' && (
+                    <button
+                      type="button"
+                      title={`Hapus ${m.groups.name}`}
+                      aria-label={`Hapus ${m.groups.name}`}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setWorkspaceToDelete({
+                          id: m.groups!.id,
+                          name: m.groups!.name,
+                        })
+                      }}
+                      className="p-1 -mr-1 rounded-md text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors focus:outline-none focus:ring-1 focus:ring-rose-500/30"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  )}
                 </div>
               </DropdownItem>
             )
@@ -116,6 +138,13 @@ export function WorkspaceSwitcher() {
       <CreateWorkspaceDialog
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
+      />
+
+      {/* Modal Dialog Hapus Workspace */}
+      <DeleteWorkspaceDialog
+        isOpen={!!workspaceToDelete}
+        onClose={() => setWorkspaceToDelete(null)}
+        workspace={workspaceToDelete}
       />
     </>
   )

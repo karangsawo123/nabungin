@@ -1,11 +1,16 @@
 'use server'
 
 import { cookies } from 'next/headers'
+import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import type { Group } from '@/types/database'
 
 export type WorkspaceActionResult =
   | { success: true; group: Group; role: 'owner' }
+  | { success: false; error: string }
+
+export type DeleteWorkspaceResult =
+  | { success: true; fallbackWorkspaceId: string }
   | { success: false; error: string }
 
 /**
@@ -143,3 +148,136 @@ export async function setActiveWorkspaceCookieAction(groupId: string) {
     sameSite: 'lax',
   })
 }
+
+/**
+ * Menghapus Shared Workspace secara permanen (Khusus Owner).
+ * Seluruh mutasi transaksi, target, pos kategori, riwayat aktivitas, dan relasi anggota di dalamnya akan dihapus.
+ * Ruang tabungan personal utama diproteksi dan tidak dapat dihapus.
+ */
+export async function deleteWorkspaceAction(
+  groupId: string
+): Promise<DeleteWorkspaceResult> {
+  const supabase = await createClient()
+
+  // 1. Verifikasi pengguna terotentikasi
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser()
+
+  if (userError || !user) {
+    return { success: false, error: 'Sesi berakhir. Silakan login kembali.' }
+  }
+
+  // 2. Ambil informasi grup yang akan dihapus
+  const { data: targetGroup, error: fetchGroupError } = await supabase
+    .from('groups')
+    .select('id, name, type')
+    .eq('id', groupId)
+    .maybeSingle()
+
+  if (fetchGroupError || !targetGroup) {
+    return { success: false, error: 'Ruang tabungan tidak ditemukan atau sudah dihapus.' }
+  }
+
+  // 3. Proteksi ruang tabungan personal utama
+  if (targetGroup.type === 'personal') {
+    return {
+      success: false,
+      error: 'Ruang tabungan pribadi (Personal) tidak dapat dihapus karena merupakan akun utama Anda.',
+    }
+  }
+
+  // 4. Verifikasi bahwa pemanggil adalah owner dari grup ini
+  const { data: callerMembership, error: memberError } = await supabase
+    .from('group_members')
+    .select('role')
+    .eq('group_id', groupId)
+    .eq('user_id', user.id)
+    .maybeSingle()
+
+  if (memberError || !callerMembership || callerMembership.role !== 'owner') {
+    return {
+      success: false,
+      error: 'Hanya pemilik (owner) yang memiliki wewenang untuk menghapus ruang tabungan ini.',
+    }
+  }
+
+  // 5. Tangani penghapusan transaksi terlebih dahulu
+  // Menghindari pelanggaran foreign key ON DELETE RESTRICT dari transactions.category_id -> categories.id
+  const { data: groupGoals } = await supabase
+    .from('goals')
+    .select('id')
+    .eq('group_id', groupId)
+
+  const goalIds = groupGoals?.map((g) => g.id) || []
+  if (goalIds.length > 0) {
+    const { error: txDeleteError } = await supabase
+      .from('transactions')
+      .delete()
+      .in('goal_id', goalIds)
+
+    if (txDeleteError) {
+      console.error('Gagal menghapus transaksi workspace:', txDeleteError)
+      return {
+        success: false,
+        error: 'Gagal membersihkan mutasi transaksi ruang tabungan: ' + txDeleteError.message,
+      }
+    }
+  }
+
+  // 6. Hapus record groups
+  // Di Postgres, ON DELETE CASCADE akan otomatis menghapus:
+  // - goals
+  // - categories
+  // - group_members
+  // - group_invites
+  // - activity_logs
+  const { error: deleteGroupError } = await supabase
+    .from('groups')
+    .delete()
+    .eq('id', groupId)
+
+  if (deleteGroupError) {
+    console.error('Gagal menghapus groups:', deleteGroupError)
+    return {
+      success: false,
+      error: deleteGroupError.message || 'Gagal menghapus ruang tabungan.',
+    }
+  }
+
+  // 7. Ambil daftar workspace tersisa dari pengguna untuk menentukan fallback
+  const { data: remainingMemberships } = await supabase
+    .from('group_members')
+    .select('group_id, groups (id, type)')
+    .eq('user_id', user.id)
+
+  const personalMembership = remainingMemberships?.find(
+    (m) => m.groups?.type === 'personal'
+  )
+  const fallbackGroupId =
+    personalMembership?.group_id || remainingMemberships?.[0]?.group_id || ''
+
+  // 8. Sinkronkan cookie active_workspace_id
+  const cookieStore = await cookies()
+  if (fallbackGroupId) {
+    cookieStore.set('active_workspace_id', fallbackGroupId, {
+      path: '/',
+      maxAge: 60 * 60 * 24 * 365,
+      sameSite: 'lax',
+    })
+  } else {
+    cookieStore.delete('active_workspace_id')
+  }
+
+  // 9. Revalidate semua cache terkait
+  revalidatePath('/', 'layout')
+  revalidatePath('/dashboard')
+  revalidatePath('/groups')
+  revalidatePath('/goals')
+  revalidatePath('/transactions')
+  revalidatePath('/categories')
+
+  return { success: true, fallbackWorkspaceId: fallbackGroupId }
+}
+
