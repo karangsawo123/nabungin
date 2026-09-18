@@ -18,6 +18,7 @@ import {
   Award,
 } from 'lucide-react'
 import { LandingNavbar } from '@/components/landing/landing-navbar'
+import { PendingInviteBanner } from '@/components/landing/pending-invite-banner'
 import { InteractiveSimulator } from '@/components/landing/interactive-simulator'
 import { Logo } from '@/components/brand/logo'
 
@@ -33,6 +34,9 @@ export default async function HomePage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-[#FAF8F5] text-slate-800 selection:bg-emerald-500/20 selection:text-emerald-800">
+      {/* Banner Undangan Tertunda (Jika Ada dari Shortcut/PWA) */}
+      <PendingInviteBanner />
+
       {/* Navbar */}
       <LandingNavbar />
 

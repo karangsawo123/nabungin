@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -16,11 +16,24 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Nabungin — Nabung Bersama, Tumbuh Bersama",
   description: "Platform tabungan personal dan kolaboratif transparan, aman, dan berbiaya Rp0. Wujudkan target finansial bersama.",
+  manifest: "/manifest.webmanifest",
   icons: {
     icon: "/favicon.png",
     shortcut: "/favicon.png",
-    apple: "/favicon.png",
+    apple: "/logo-opsi2.png",
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Nabungin",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#090D16",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({
